@@ -1,0 +1,14 @@
+#  Experience APIs
+mobileApi:
+  build: ./experience/mobile-api/
+  container_name: mobile-api
+
+# Process APIs
+location:
+  build: ./process/location/
+  container_name: location
+
+# System APIs
+stores:
+  build: ./system/stores
+  container_name: stores

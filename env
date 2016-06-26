@@ -1,0 +1,7 @@
+SERVICE_HOST=0.0.0.0
+SERVICE_PORT=20000
+#  PROXY_HOST=set this to the docker-machine ip address or local machine address on linux
+
+mobile-api_PORT=10001
+location_PORT=10002
+stores_PORT=10003

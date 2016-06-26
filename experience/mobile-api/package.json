@@ -1,0 +1,36 @@
+{
+  "name": "api",
+  "description": "mobile API",
+  "keywords": [
+    "awesome",
+    "site"
+  ],
+  "version": "0.1.0",
+  "main": "./index.js",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "express": "^4.13.4",
+    "morgan": "^1.7.0",
+    "seneca": "^1.2.0"
+  },
+  "repository": {
+    "private": true
+  },
+  "scripts": {
+    "lint": "jshint **/*.js",
+    "test": "jshint **/*.js && tape test/*Test.js",
+    "coverage": "istanbul cover tape test/*Test.js && open ./coverage/lcov-report/index.html",
+    "coverage-check": "istanbul cover tape test/*Test.js && istanbul check-coverage",
+    "commit-check": "jshint **/*.js && istanbul cover tape test/*Test.js && istanbul check-coverage"
+  },
+  "pre-commit": [
+    "commit-check"
+  ],
+  "devDependencies": {
+    "pre-commit": "^1.1.1",
+    "tape": "^4.2.0"
+  }
+}
