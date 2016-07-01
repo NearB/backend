@@ -21,3 +21,9 @@ stores:
   env_file: './env'
   ports:
     - 10003:20003
+
+# Storages & other infra
+storesDb:
+  image: mongo:3.2.7
+  ports:
+    - 10003:27017

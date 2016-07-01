@@ -12,3 +12,9 @@ location:
 stores:
   build: ./system/stores
   container_name: stores
+
+# Storages & other infra
+storesDb:
+  image: mongo:3.2.7
+  ports:
+    - 10003:27017
