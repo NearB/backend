@@ -1,5 +1,5 @@
 #  Experience APIs
-mobileApi:
+mobile_api:
   build: ./experience/mobile-api/
   container_name: mobile-api
   env_file: './env'
@@ -23,7 +23,15 @@ stores:
     - 10003:20003
 
 # Storages & other infra
-storesDb:
+stores_db:
   image: mongo:3.2.7
+  volumes_from:
+    - stores_db__data_volume
   ports:
-    - 10003:27017
+    - 11000:27017
+
+stores_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
