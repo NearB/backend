@@ -32,13 +32,16 @@ fuge> start
 Go [here](http://localhost:10000/api/location/list). 
 
 If everything was fine, the proxy at port 10000 is redirecting the 
-request to the the Mobile API, which is interacting with the Location API,
-which in turns interacts with the Stores API
+request to the Mobile API, which is interacting with the Location API,
+which in turns interacts with the Stores API, who is actually gathering
+data from a db
 
 
 ### Troubleshooting
 
 #### Issues with MongoDb containers
+
+##### 1. Unclean shutdown
 
 > [initandlisten] Detected unclean shutdown - /data/db/mongod.lock is not empty.
 
@@ -49,6 +52,8 @@ docker-compose -f compose-dev.yml rm -v stores_db
 docker-compose -f compose-dev.yml pull stores_db
 ```
 
+
+##### 2. Address in use
 
 > [stores_db - 21479]: docker: Error response from daemon: driver failed programming external connectivity on endpoint drunk_kirch (eaea99501446f0f169353e39e82bb5e06799175786282217674a0a13efb76a05): Bind for 0.0.0.0:11000 failed: port is already allocated.
 
