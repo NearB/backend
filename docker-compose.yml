@@ -35,3 +35,8 @@ stores_db__data_volume:
   volumes:
     - /data/db
   command: /bin/true
+
+find:
+  image: sebastianbogado/find
+  ports:
+    - 11001:8003

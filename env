@@ -10,3 +10,4 @@ stores_PORT=10002
 # Storages and other infra
 stores_db_PORT=11000
 stores_db__data_volume_PORT=10003
+find_PORT=11001
