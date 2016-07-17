@@ -20,10 +20,10 @@
   },
   "scripts": {
     "lint": "jshint **/*.js",
-    "test": "jshint **/*.js && tape test/*Test.js",
-    "coverage": "istanbul cover tape test/*Test.js && open ./coverage/lcov-report/index.html",
-    "coverage-check": "istanbul cover tape test/*Test.js && istanbul check-coverage",
-    "commit-check": "jshint **/*.js && istanbul cover tape test/*Test.js && istanbul check-coverage"
+    "test": "tape test/*Test.js",
+    "coverage": "istanbul cover npm test && open ./coverage/lcov-report/index.html",
+    "coverage-check": "istanbul cover npm test && istanbul check-coverage",
+    "commit-check": ["lint", "coverage-check"]
   },
   "pre-commit": [
     "commit-check"
