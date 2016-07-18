@@ -13,6 +13,10 @@ stores:
   build: ./system/stores
   container_name: stores
 
+find_service:
+  build: ./system/find
+  container_name: find_service
+
 # Storages & other infra
 stores_db:
   image: mongo:3.2.7

@@ -14,7 +14,8 @@
     "bluebird": "^3.4.1",
     "express": "^4.13.4",
     "morgan": "^1.7.0",
-    "seneca": "^1.2.0"
+    "seneca": "^1.2.0",
+    "underscore": "^1.8.3"
   },
   "repository": {
     "private": true

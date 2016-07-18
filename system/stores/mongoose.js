@@ -23,7 +23,7 @@ mongoose.connection.on('error', function retryOnError(err) {
   }
 });
 
-mongoose.connection.once('open', function() {
+mongoose.connection.once('open', function () {
   // we're connected!
   retries = 0;
 });
