@@ -1,14 +1,27 @@
 SERVICE_HOST=0.0.0.0
 SERVICE_PORT=20000
-#  PROXY_HOST=set this to the docker-machine ip address or local machine address on linux
+#PROXY_HOST=set this to the docker-machine ip address or local machine address on linux
 
 # Services
-mobile_api_PORT=10000
-location_PORT=10001
-stores_PORT=10002
 
-# Storages and other infra
-stores_db_PORT=11000
-stores_db__data_volume_PORT=10003
-find_PORT=11001
-stores_db__data_volume_PORT=10004
+##  Experience Services
+mobile_api_PORT=10000
+web_api_PORT=10001
+
+##  Process Services
+location_PORT=10002
+stores_management_PORT=10003
+warehouse_PORT=10004
+
+##  System Services => 1002x
+stores_PORT=10005
+content_PORT=10006
+find_service_PORT=10007
+
+# Storage and other infra => 110xx
+stores_db__data_volume_PORT=10008
+content_db__data_volume_PORT=10009
+find__data_volume_PORT=10010
+find_PORT=11011
+stores_db_PORT=11012
+content_db_PORT=11013

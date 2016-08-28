@@ -1,21 +1,39 @@
-#  Experience APIs
+#  Experience APIs => ./experience/
 mobile_api:
   build: ./experience/mobile-api/
   container_name: mobile-api
 
-# Process APIs
+web_api:
+  build: ./experience/web-api/
+  container_name: web-api
+
+# Process APIs => ./process/
 location:
   build: ./process/location/
   container_name: location
 
-# System APIs
+stores_management:
+  build: ./process/stores-management/
+  container_name: stores-management
+
+warehouse:
+  build: ./process/warehouse
+  container_name: warehouse
+
+
+# System APIs => ./system/
 stores:
   build: ./system/stores
   container_name: stores
 
+content:
+  build: ./system/content
+  container_name: content
+
 find_service:
   build: ./system/find
   container_name: find_service
+
 
 # Storages & other infra
 stores_db:
@@ -23,9 +41,22 @@ stores_db:
   volumes_from:
     - stores_db__data_volume
   ports:
-    - 11000:27017
+    - 11009:27017
 
 stores_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
+
+content_db:
+  image: mongo:3.2.7
+  volumes_from:
+    - content_db__data_volume
+  ports:
+    - 11011:27017
+
+content_db__data_volume:
   image: mongo:3.2.7
   volumes:
     - /data/db
@@ -36,7 +67,7 @@ find:
   volumes_from:
     - find__data_volume
   ports:
-    - 11001:8003
+    - 11010:8003
 
 find__data_volume:
   image: sebastianbogado/find

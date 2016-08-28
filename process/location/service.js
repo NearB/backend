@@ -20,8 +20,8 @@ seneca.client({
 
 seneca.add({role: 'location', cmd: 'list'}, (args, callback) => {
 
-  act({role: 'stores', cmd: 'list'})
-    .then(function (result) {
+  act({role: 'stores', cmd: 'find'})
+    .then(result => {
       // Perform some aggregation / transformation on the results
       var locationResult = {
         timestamp: new Date(),
@@ -36,13 +36,13 @@ seneca.add({role: 'location', cmd: 'list'}, (args, callback) => {
 seneca.add({role: 'location', cmd: 'status'}, (args, callback) => {
 
   act({role: 'find', cmd: 'status'})
-    .then(function (res) {
+    .then(res => {
       return {data: res};
     })
-    .then((result) => {
+    .then(result => {
       callback(null, result);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
     });
 });
@@ -50,13 +50,13 @@ seneca.add({role: 'location', cmd: 'status'}, (args, callback) => {
 seneca.add({role: 'location', cmd: 'learn'}, (args, callback) => {
 
   act({role: 'find', cmd: 'learn', ap:args.ap})
-    .then(function (res) {
+    .then(res => {
       return {data: res};
     })
-    .then((result) => {
+    .then(result => {
       callback(null, result);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
     });
 });

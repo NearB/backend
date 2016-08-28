@@ -1,7 +1,8 @@
 {
-  "name": "mobile_api",
-  "description": "mobile API",
+  "name": "web_api",
+  "description": "web API",
   "keywords": [
+    "web",
     "awesome",
     "site"
   ],
@@ -13,6 +14,7 @@
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
     "express": "^4.13.4",
     "morgan": "^1.7.0",
     "seneca": "^1.2.0",

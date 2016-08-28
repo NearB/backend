@@ -1,22 +1,19 @@
 {
-  "name": "mobile_api",
-  "description": "mobile API",
+  "name": "stores_management",
+  "description": "stores management service",
   "keywords": [
-    "awesome",
-    "site"
+    "seneca",
+    "service"
   ],
+  "license": "MIT",
   "version": "0.1.0",
-  "main": "./index.js",
+  "main": "./service.js",
   "engines": {
     "node": "*"
   },
   "dependencies": {
     "bluebird": "^3.4.1",
-    "body-parser": "^1.15.2",
-    "express": "^4.13.4",
-    "morgan": "^1.7.0",
-    "seneca": "^1.2.0",
-    "underscore": "^1.8.3"
+    "seneca": "^2.0.1"
   },
   "repository": {
     "private": true
@@ -26,10 +23,7 @@
     "test": "tape test/*Test.js",
     "coverage": "istanbul cover npm test && open ./coverage/lcov-report/index.html",
     "coverage-check": "istanbul cover npm test && istanbul check-coverage",
-    "commit-check": [
-      "lint",
-      "coverage-check"
-    ]
+    "commit-check": ["lint", "coverage-check"]
   },
   "pre-commit": [
     "commit-check"

@@ -14,12 +14,11 @@ node_modules
 npm-debug.log
 mochahelper.js
 .idea/
-*.iml
 .settings/
 dist
 .tmp
 .sass-cache
-bower_components
+app/bower_components
 options.mine.js
 db/
 data/
