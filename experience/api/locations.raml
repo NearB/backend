@@ -1,0 +1,36 @@
+#%RAML 1.0 Library
+uses:
+usage: Location related types
+
+types:
+  SuccessLocation:
+    type: !include successType.raml
+    properties:
+      data: Location
+
+  SuccessLocations:
+    type: !include successType.raml
+    properties:
+      data: Location[]
+
+  Location:
+    type: object
+    properties:
+      coordinates: string
+      address?: string
+      fingerprint: Fingerprint[]
+
+  TrackingInformation:
+    type: object
+    properties:
+      group: string
+      username: string
+      locationName: string
+      timestamp: string
+      wifi-fingerprint: Fingerprint[]
+
+  Fingerprint:
+    type: object
+    properties:
+      mac: string
+      level: integer

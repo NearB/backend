@@ -1,0 +1,59 @@
+#%RAML 1.0 Library
+uses:
+  locations: locations.raml
+  stores: stores.raml
+
+usage: User related types
+
+types:
+  User:
+    type: object
+    properties:
+      username: string
+      name: string
+      fbId?: string
+
+  Owner:
+    type: User
+    properties:
+      stores: stores.Store[]
+
+  Client:
+    type: User
+    properties:
+      favorites:
+        description: Set of Locations where this is an usual Client
+        type: locations.Location[]
+      filters:
+        description: Preferences filters for narrowing marketing targets
+        type: string[]
+
+  SuccessUser:
+    type: !include successType.raml
+    properties:
+      data: User
+
+  SuccessUsers:
+    type: !include successType.raml
+    properties:
+      data: User[]
+
+  SuccessOwner:
+    type: !include successType.raml
+    properties:
+      data: Owner
+
+  SuccessOwners:
+    type: !include successType.raml
+    properties:
+      data: Owner[]
+
+  SuccessClient:
+    type: !include successType.raml
+    properties:
+      data: Client
+
+  SuccessClients:
+    type: !include successType.raml
+    properties:
+      data: Client[]

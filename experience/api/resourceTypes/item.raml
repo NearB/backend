@@ -1,0 +1,58 @@
+#%RAML 1.0 ResourceType
+
+description: The item of a collection
+get:
+  description: Get all <<resourcePathName>>, optionally filtered
+  responses:
+    400:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    404:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+
+    500:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+put:
+  description: Update the <<resourcePathName | !singularize>>
+  responses:
+    400:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    404:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    405:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    500:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+
+delete:
+  description: Delete the <<resourcePathName | !singularize>>
+  responses:
+    400:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    404:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    405:
+      body:
+        application/json:
+          type: !include ../errorType.raml
+    500:
+      body:
+        application/json:
+          type: !include ../errorType.raml

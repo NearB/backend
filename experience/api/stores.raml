@@ -1,0 +1,31 @@
+#%RAML 1.0 Library
+uses:
+  locations: locations.raml
+
+usage: Store related types
+types:
+  SuccessStore:
+    type: !include successType.raml
+    properties:
+      data: Store
+
+  SuccessStores:
+    type: !include successType.raml
+    properties:
+      data: Store
+
+  Store:
+    type: object
+    properties:
+      id: string
+      name: string
+      ownerId: string
+      locations:
+        description: Set of Locations placed near or inside this Store
+        type: locations.Location[]
+      campaignTags?:
+        description: Set of tags used to identify if a Campaign applies to this Store
+        type: string[]
+      adTags?:
+        description: Set of tags used to identify if an Ad applies to this Store
+        type: string[]

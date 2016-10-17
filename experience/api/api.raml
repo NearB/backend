@@ -1,0 +1,142 @@
+#%RAML 1.0
+title: GitHub API
+version: v3
+baseUri: https://api.github.com
+mediaType:  application/json
+
+uses:
+  locations: locations.raml
+  stores: stores.raml
+  users: users.raml
+  marketing: marketing.raml
+  products: product.raml
+
+resourceTypes:
+  collection: !include resourceTypes/collection.raml
+  item: !include resourceTypes/item.raml
+
+/api:
+  /stores:
+    type: collection
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: stores.SuccessStores
+
+    post:
+      body:
+        application/json:
+          type: stores.Store
+      responses:
+        200:
+          body:
+            application/json:
+              type: stores.SuccessStore
+
+    /{storeId}:
+      type: item
+      get:
+        description: Retrieve the given Store
+        responses:
+          200:
+            body:
+              application/json:
+                type: stores.Store
+      put:
+        description: Update Store
+        body:
+          application/json:
+            type: stores.Store
+        responses:
+          200:
+            body:
+              application/json:
+                type: stores.Store
+      /stock:
+        get:
+          description: List the stock for the given Store
+          responses:
+            200:
+              body:
+                application/json:
+                  type: products.SuccessStock
+
+      /campaigns:
+        type: collection
+        get:
+          description: List the campaigns associated to this Store
+          responses:
+            200:
+              body:
+                application/json:
+                  type: marketing.SuccessCampaigns
+
+      /ads:
+        type: collection
+        get:
+          description: List the Ads associated to this Store
+          responses:
+            200:
+              body:
+                application/json:
+                  type: marketing.SuccessAds
+
+      /clients:
+        type: collection
+        get:
+          description: List of Clients that are usual in this Store Locations
+          responses:
+            200:
+              body:
+                application/json:
+                  type: users.SuccessUsers
+  /users:
+    type: collection
+    get:
+      queryParameters:
+        preferences: string[]
+      responses:
+        200:
+          body:
+            application/json:
+              type: users.SuccessUsers
+
+    /${userId}:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: users.SuccessUser
+
+  /locations:
+    type: collection
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: locations.SuccessLocations
+
+    post:
+      body:
+        application/json:
+          type: locations.TrackingInformation
+      responses:
+        200:
+          body:
+            application/json:
+              type: locations.Location
+
+    put:
+      description: Update Location based on tracking information
+      body:
+        application/json:
+          type: locations.TrackingInformation
+      responses:
+        200:
+          body:
+            application/json:
+              type: locations.Location
