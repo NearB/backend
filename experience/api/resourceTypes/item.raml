@@ -7,35 +7,35 @@ get:
     400:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     404:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
 
     500:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
 put:
   description: Update the <<resourcePathName | !singularize>>
   responses:
     400:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     404:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     405:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     500:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
 
 delete:
   description: Delete the <<resourcePathName | !singularize>>
@@ -43,16 +43,16 @@ delete:
     400:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     404:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     405:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     500:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml

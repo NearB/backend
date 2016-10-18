@@ -10,32 +10,32 @@ get:
     400:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     404:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
 
     500:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
 post:
   description: Create a new <<resourcePathName | !singularize>>
   responses:
     400:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     404:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     405:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
     500:
       body:
         application/json:
-          type: !include ../errorType.raml
+          type: !include ../types/errorType.raml
