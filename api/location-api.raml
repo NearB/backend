@@ -1,0 +1,89 @@
+#%RAML 1.0
+title: GitHub API
+version: v1
+baseUri: https://www.nearb.com/v1/process/api/location
+mediaType:  application/json
+
+uses:
+  locations: types/locations.raml
+  stores: types/stores.raml
+
+/locations:
+  get:
+    queryString:
+      description: |
+        Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
+        the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
+      example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+    responses:
+      200:
+        body:
+          application/json:
+            type: locations.SuccessLocations
+  put:
+    body:
+      application/json:
+        type: locations.TrackingInformation
+    responses:
+      200:
+        body:
+          application/json:
+            type: locations.SuccessLocation
+
+  delete:
+    description: removes the locations that match the given Fingerprint filter
+    body:
+      application/json:
+        type: locations.Fingerprint[]
+    responses:
+      200:
+        body:
+          application/json:
+            type: !include types/successType.raml
+
+  /${locationId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: locations.SuccessLocation
+
+    delete:
+      description: Removes the location identified by <<locationId>>
+      responses:
+        200:
+          description: Returns the remaining locations
+          body:
+            application/json:
+              type: locations.SuccessLocations
+/discover:
+  description: Endpoint used to discover stores based on location.
+
+  /geo:
+    description: Discover nearby stores based on geo location
+    get:
+      queryParameters:
+        coords: string
+        radio?:
+          description: Search radio from coordinates, in meters
+          type: integer
+      responses:
+        200:
+          body:
+            application/json:
+              type: stores.SuccessStores
+
+  /beacon:
+    description: Discover nearby stores beacons fingerprints
+    get:
+      queryString:
+        description: |
+          Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
+          the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+      responses:
+        200:
+          body:
+            application/json:
+              type: stores.SuccessStores

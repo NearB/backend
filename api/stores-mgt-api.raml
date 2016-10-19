@@ -1,0 +1,127 @@
+#%RAML 1.0
+title: GitHub API
+version: v3
+baseUri: https://www.nearb.com/v1/process/api
+mediaType:  application/json
+
+uses:
+  locations: types/locations.raml
+  stores: types/stores.raml
+  users: types/users.raml
+  marketing: types/marketing.raml
+
+/stores:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: stores.SuccessStores
+
+  post:
+    body:
+      application/json:
+        type: stores.Store
+    responses:
+      200:
+        body:
+          application/json:
+            type: stores.SuccessStore
+
+  /{storeId}:
+    get:
+      description: Retrieve the given Store
+      responses:
+        200:
+          body:
+            application/json:
+              type: stores.SuccessStore
+    put:
+      description: Update Store
+      body:
+        application/json:
+          type: stores.Store
+      responses:
+        200:
+          description: Returns the updated Store
+          body:
+            application/json:
+              type: stores.SuccessStore
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: !include types/successType.raml
+
+    /products:
+      get:
+        description: List the stock for the given Store
+        responses:
+          200:
+            body:
+              application/json:
+                type: stores.SuccessStock
+      post:
+        description: Add a product as part of this Store stock
+        body:
+          application/json:
+            type: stores.ProductStock[]
+
+      /${productId}:
+        put:
+          body:
+            application/json:
+              type: stores.ProductStock
+          responses:
+            200:
+              body:
+                application/json:
+                  type: stores.ProductStock
+        delete:
+          responses:
+            200:
+              body:
+                application/json:
+                  type: stores.SuccessStock
+
+    /campaigns:
+      get:
+        description: List the tags used to find the campaigs associated to this Store
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include types/successType.raml
+                properties:
+                  tags: string[]
+      put:
+        description: Set of tags that will be used to filter this Store campaings
+        body:
+          application/json:
+            type: string[]
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include types/successType.raml
+    /ads:
+      get:
+        description: List the tags used to find the Ads associated to this Store
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include types/successType.raml
+                properties:
+                  tags: string[]
+      put:
+        description: Set of tags that will be used to filter this Store Ads
+        body:
+          application/json:
+            type: string[]
+        responses:
+          200:
+            body:
+              application/json:
+                type: !include types/successType.raml

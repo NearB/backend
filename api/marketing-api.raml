@@ -1,0 +1,67 @@
+#%RAML 1.0
+title: GitHub API
+version: v1
+baseUri: https://www.nearb.com/v1/process/api/marketing
+mediaType:  application/json
+
+uses:
+  marketing: types/marketing.raml
+
+/ads:
+  get:
+    description: Lists all the available Ads that can be used by the stores
+    responses:
+      200:
+        body:
+          application/json:
+            type: marketing.SuccessAds
+  post:
+    body:
+      application/json:
+        type: marketing.Ad
+    responses:
+      200:
+        body:
+          application/json:
+            type: marketing.SuccessAd
+  /${adId}:
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: marketing.SuccessAds
+/campaigns:
+  get:
+    description: Lists all the available Campaings that can be used by the stores
+    responses:
+      200:
+        body:
+          application/json:
+            type: marketing.SuccessAds
+  post:
+    body:
+      application/json:
+        type: marketing.Campaign
+    responses:
+      200:
+        body:
+          application/json:
+            type: marketing.SuccessCampaign
+
+  /${campaignId}:
+    put:
+      body:
+        application/json:
+          type: marketing.Campaign
+      responses:
+        200:
+          body:
+            application/json:
+              type: marketing.SuccessCampaign
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: marketing.SuccessCampaigns

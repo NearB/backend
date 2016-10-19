@@ -1,0 +1,44 @@
+#%RAML 1.0
+title: GitHub API
+version: v1
+baseUri: https://www.nearb.com/v1/process/api
+mediaType:  application/json
+
+uses:
+  products: types/product.raml
+
+/products:
+  get:
+    queryParameters:
+      tags: string[]
+    responses:
+      200:
+        body:
+          application/json:
+            type: products.SuccessProducts
+  post:
+    body:
+      application/json:
+        type: products.Product
+    responses:
+      200:
+        body:
+          application/json:
+            type: products.SuccessProduct
+
+  /${productId}:
+    put:
+      body:
+        application/json:
+          type: products.Product
+      responses:
+        200:
+          body:
+            application/json:
+              type: products.SuccessProduct
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: products.SuccessProducts

@@ -4,15 +4,6 @@ uses:
 
 usage: Store related types
 types:
-  SuccessStore:
-    type: !include successType.raml
-    properties:
-      data: Store
-
-  SuccessStores:
-    type: !include successType.raml
-    properties:
-      data: Store
 
   Store:
     type: object
@@ -20,6 +11,7 @@ types:
       id: string
       name: string
       ownerId: string
+      stock: ProductStock[]
       locations:
         description: Set of Locations placed near or inside this Store
         type: locations.Location[]
@@ -29,3 +21,25 @@ types:
       adTags?:
         description: Set of tags used to identify if an Ad applies to this Store
         type: string[]
+
+  ProductStock:
+    description: References a product as part of the Stock of some Store or WareHouse
+    type: object
+    properties:
+      productId: string
+      price: number
+      stock: number
+
+  SuccessStore:
+    type: !include successType.raml
+    properties:
+      data: Store
+
+  SuccessStores:
+    type: !include successType.raml
+    properties:
+      data: Store
+  SuccessStock:
+    type: !include successType.raml
+    properties:
+      data: ProductStock[]

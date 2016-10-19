@@ -28,6 +28,8 @@ types:
       When a given Campaing is applied, any of the Ads that compose it can be used to represent it.
     type: object
     properties:
+      id: string
+      name: string
       tags:
         description: Set of Tags used to identify when to apply this Campaing
         type: string[]
@@ -45,6 +47,8 @@ types:
     description: Simple marketing message transmitted within an image
     type: object
     properties:
+      id: string
+      name: string
       img:
         type: file
         fileTypes: ['image/jpeg', 'image/png']

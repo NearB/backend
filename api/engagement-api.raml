@@ -1,0 +1,15 @@
+#%RAML 1.0
+title: GitHub API
+version: v1
+baseUri: https://www.nearb.com/v1/api/engagement
+mediaType:  application/json
+
+uses:
+  stores: types/stores.raml
+  users: types/users.raml
+  marketing: types/marketing.raml
+  products: types/product.raml
+
+/promotions:
+  get:
+    queryParameters:
