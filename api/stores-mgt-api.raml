@@ -1,14 +1,11 @@
 #%RAML 1.0
 title: GitHub API
 version: v3
-baseUri: https://www.nearb.com/v1/process/api
+baseUri: https://www.nearb.com/v1/process
 mediaType:  application/json
 
 uses:
-  locations: types/locations.raml
   stores: types/stores.raml
-  users: types/users.raml
-  marketing: types/marketing.raml
 
 /stores:
   get:
@@ -68,7 +65,7 @@ uses:
           application/json:
             type: stores.ProductStock[]
 
-      /${productId}:
+      /{productId}:
         put:
           body:
             application/json:

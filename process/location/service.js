@@ -18,7 +18,9 @@ seneca.client({
   pin: {role: 'stores'}
 });
 
-seneca.add({role: 'location', cmd: 'list'}, (args, callback) => {
+
+// =============== /locations ===============
+seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback) => {
 
   act({role: 'stores', cmd: 'find'})
     .then(result => {
@@ -33,7 +35,7 @@ seneca.add({role: 'location', cmd: 'list'}, (args, callback) => {
     .catch(callback);
 });
 
-seneca.add({role: 'location', cmd: 'status'}, (args, callback) => {
+seneca.add({role: 'location', resource:'locations', cmd: 'POST'}, (args, callback) => {
 
   act({role: 'find', cmd: 'status'})
     .then(res => {
@@ -47,9 +49,38 @@ seneca.add({role: 'location', cmd: 'status'}, (args, callback) => {
     });
 });
 
-seneca.add({role: 'location', cmd: 'learn'}, (args, callback) => {
+// =============== location/:locationId ===============
+seneca.add({role: 'location', resource:'location', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'find', cmd: 'learn', ap:args.ap})
+  act({role: 'find', cmd: 'status'})
+    .then(res => {
+      return {data: res};
+    })
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+seneca.add({role: 'location', resource:'location', cmd: 'PUT'}, (args, callback) => {
+
+  act({role: 'find', cmd: 'status'})
+    .then(res => {
+      return {data: res};
+    })
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+});
+
+seneca.add({role: 'location', resource:'location', cmd: 'DELETE'}, (args, callback) => {
+
+  act({role: 'find', cmd: 'status'})
     .then(res => {
       return {data: res};
     })

@@ -1,0 +1,272 @@
+'use strict';
+
+const seneca = require('seneca')();
+const mongoose = require('./mongoose');
+mongoose.Promise = require('bluebird');
+
+const Products = require('./models').Products;
+
+const successCb = (cb) => {
+  return res => {
+    return cb.call(this, null, res);
+  }
+};
+
+const execute = (query, cb) => {
+  const promise = query.select('-__v').lean();
+  if (!cb) {
+    return promise;
+  }
+  promise
+      .then(successCb(cb))
+      .catch(cb);
+};
+
+// =============== Product ===============
+// =============== create ===============
+
+seneca.add({role: 'products', cmd: 'create'}, (args, cb) => {
+  new Products.Product(newStore)
+      .save()
+      .then(saved => {
+        newStore._id = saved.id;
+        cb(null, newStore);
+      })
+      .catch(cb);
+});
+
+// =============== read ===============
+
+seneca.add({role: 'products', cmd: 'read'}, (args, cb) => {
+  execute(Products.Product.find(args.where, args.select), cb);
+});
+
+seneca.add({role: 'products', cmd: 'read', type: 'one'}, (args, cb) => {
+  execute(Products.Product.findOne(args.where, args.select, args.ops), cb);
+});
+
+seneca.add({role: 'products', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Products.Product.findById(args.id, args.select, args.ops), cb);
+});
+
+
+// =============== delete ===============
+
+seneca.add({role: 'products', cmd: 'delete', type: 'id'}, (args, cb) => {
+  execute(Products.Product.findByIdAndRemove(args.id, args.ops), cb);
+});
+
+seneca.add({role: 'products', cmd: 'delete', type: 'one'}, (args, cb) => {
+  execute(Products.Product.findOneAndRemove(args.where, args.ops), cb);
+});
+
+
+// =============== update ===============
+
+seneca.add({role: 'products', cmd: 'update', type: 'id'}, (args, cb) => {
+  execute(Products.Product.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'products', cmd: 'update', type: 'one'}, (args, cb) => {
+  execute(Products.Product.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'products', cmd: 'update', type: 'bulk'}, (args, cb) => {
+  execute(Products.Product.find(args.where))
+      .then(oldDocs => {
+        execute(Products.Product.update(args.where, args.doc, args.ops))
+            .then((result) => {
+              cb(null, {
+                updateResult: result,
+                modified: oldDocs
+              })
+            })
+            .catch(cb);
+      })
+      .catch(cb);
+});
+
+// =============== CartProduct ===============
+// =============== create ===============
+
+seneca.add({role: 'cartProduct', cmd: 'create'}, (args, cb) => {
+  new Products.CartProduct(newStore)
+      .save()
+      .then(saved => {
+        newStore._id = saved.id;
+        cb(null, newStore);
+      })
+      .catch(cb);
+});
+
+// =============== read ===============
+
+seneca.add({role: 'cartProduct', cmd: 'read'}, (args, cb) => {
+  execute(Products.CartProduct.find(args.where, args.select), cb);
+});
+
+seneca.add({role: 'cartProduct', cmd: 'read', type: 'one'}, (args, cb) => {
+  execute(Products.CartProduct.findOne(args.where, args.select, args.ops), cb);
+});
+
+seneca.add({role: 'cartProduct', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Products.CartProduct.findById(args.id, args.select, args.ops), cb);
+});
+
+
+// =============== delete ===============
+
+seneca.add({role: 'cartProduct', cmd: 'delete', type: 'id'}, (args, cb) => {
+  execute(Products.CartProduct.findByIdAndRemove(args.id, args.ops), cb);
+});
+
+seneca.add({role: 'cartProduct', cmd: 'delete', type: 'one'}, (args, cb) => {
+  execute(Products.CartProduct.findOneAndRemove(args.where, args.ops), cb);
+});
+
+
+// =============== update ===============
+
+seneca.add({role: 'cartProduct', cmd: 'update', type: 'id'}, (args, cb) => {
+  execute(Products.CartProduct.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'cartProduct', cmd: 'update', type: 'one'}, (args, cb) => {
+  execute(Products.CartProduct.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'cartProduct', cmd: 'update', type: 'bulk'}, (args, cb) => {
+  execute(Products.CartProduct.find(args.where))
+      .then(oldDocs => {
+        execute(Products.CartProduct.update(args.where, args.doc, args.ops))
+            .then((result) => {
+              cb(null, {
+                updateResult: result,
+                modified: oldDocs
+              })
+            })
+            .catch(cb);
+      })
+      .catch(cb);
+});
+
+// =============== Cart ===============
+// =============== create ===============
+
+seneca.add({role: 'cart', cmd: 'create'}, (args, cb) => {
+  new Products.Cart(newStore)
+      .save()
+      .then(saved => {
+        newStore._id = saved.id;
+        cb(null, newStore);
+      })
+      .catch(cb);
+});
+
+// =============== read ===============
+
+seneca.add({role: 'cart', cmd: 'read'}, (args, cb) => {
+  execute(Products.Cart.find(args.where, args.select), cb);
+});
+
+seneca.add({role: 'cart', cmd: 'read', type: 'one'}, (args, cb) => {
+  execute(Products.Cart.findOne(args.where, args.select, args.ops), cb);
+});
+
+seneca.add({role: 'cart', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Products.Cart.findById(args.id, args.select, args.ops), cb);
+});
+
+
+// =============== delete ===============
+
+seneca.add({role: 'cart', cmd: 'delete', type: 'id'}, (args, cb) => {
+  execute(Products.Cart.findByIdAndRemove(args.id, args.ops), cb);
+});
+
+seneca.add({role: 'cart', cmd: 'delete', type: 'one'}, (args, cb) => {
+  execute(Products.Cart.findOneAndRemove(args.where, args.ops), cb);
+});
+
+
+// =============== update ===============
+
+seneca.add({role: 'cart', cmd: 'update', type: 'id'}, (args, cb) => {
+  execute(Products.Cart.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'cart', cmd: 'update', type: 'one'}, (args, cb) => {
+  execute(Products.Cart.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+});
+
+seneca.add({role: 'cart', cmd: 'update', type: 'bulk'}, (args, cb) => {
+  execute(Products.Cart.find(args.where))
+      .then(oldDocs => {
+        execute(Products.Cart.update(args.where, args.doc, args.ops))
+            .then((result) => {
+              cb(null, {
+                updateResult: result,
+                modified: oldDocs
+              })
+            })
+            .catch(cb);
+      })
+      .catch(cb);
+});
+
+
+// Bootstrap some random products
+mongoose.connection.once('open', function () {
+  var data = [
+    {
+      id: 'product01',
+      name: '01 Product',
+      tags: ['tag01'],
+      img: "/some/path"
+    },
+    {
+      id: 'product02',
+      name: '02 Product',
+      tags: [],
+      img: "/some/path"
+    },
+    {
+      id: 'product03',
+      name: '03 Product',
+      tags: ['tag01', 'tag02'],
+      img: "/some/path"
+    },
+    {
+      id: 'product04',
+      name: '04 Product',
+      tags: ['tag01', 'tag02'],
+      img: "/some/path"
+    },
+    {
+      id: 'product05',
+      name: '05 Product',
+      tags: ['tag03'],
+      img: "/some/path"
+    },
+    {
+      id: 'product06',
+      name: '06 Product',
+      tags: [],
+      img: "/some/path"
+    }
+  ];
+
+  Products.Product.count()
+      .then(function (count) {
+        if (!count) return Products.Product.create(data);
+      })
+      .then(function () {
+        console.log('Products Online');
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+});
+
+
+module.exports.seneca = seneca;

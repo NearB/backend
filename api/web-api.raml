@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: GitHub API
 version: v1
-baseUri: https://www.nearb.com/v1/api
+baseUri: https://www.nearb.com/v1
 mediaType:  application/json
 
 uses:
@@ -63,6 +63,16 @@ uses:
             body:
               application/json:
                 type: stores.SuccessStock
+      post:
+        description: Add a product as part of this Store stock
+        body:
+          application/json:
+            type: stores.ProductStock[]
+        responses:
+          200:
+            body:
+              application/json:
+                type: stores.ProductStock
 
     /campaigns:
       get:
@@ -108,7 +118,7 @@ uses:
           body:
             application/json:
               type: marketing.SuccessAd
-    /${adId}:
+    /{adId}:
       delete:
         responses:
           200:
@@ -133,7 +143,14 @@ uses:
             application/json:
               type: marketing.SuccessCampaign
 
-    /${campaignId}:
+    /{campaignId}:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: marketing.SuccessCampaign
+
       put:
         body:
           application/json:
@@ -171,6 +188,13 @@ uses:
             type: products.SuccessProduct
 
   /{$productId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: products.SuccessProduct
+
     put:
       description: Updates a given product description
       body:
@@ -209,7 +233,7 @@ uses:
           application/json:
             type: users.Owner | users.Client
 
-  /${userId}:
+  /{userId}:
     get:
       responses:
         200:
@@ -223,6 +247,13 @@ uses:
       responses:
         200:
           description: Returns the updated User
+          body:
+            application/json:
+              type: users.Owner | users.Client
+    delete:
+      responses:
+        200:
+          description: Returns the removed User
           body:
             application/json:
               type: users.Owner | users.Client
@@ -244,7 +275,7 @@ uses:
           application/json:
             type: locations.SuccessLocations
 
-  /${locationId}:
+  /{locationId}:
     get:
       responses:
         200:

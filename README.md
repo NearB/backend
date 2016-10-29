@@ -1,5 +1,5 @@
 # Near.B Backend services
- 
+
 ## Requirements
 
 - [Docker](https://www.docker.com/products/overview#/install_the_platform)
@@ -18,7 +18,9 @@ To create the data volumes, run
 
 ```
 docker create --name stores_db__data_volume -v /data/db mongo:3.2.7 '/bin/true'
-docker create --name content_db__data_volume -v /data/db mongo:3.2.7 '/bin/true'
+docker create --name products_db__data_volume -v /data/db mongo:3.2.7 '/bin/true'
+docker create --name ads_db__data_volume -v /data/db mongo:3.2.7 '/bin/true'
+docker create --name users_db__data_volume -v /data/db mongo:3.2.7 '/bin/true'
 docker create --name find__data_volume -v /go/src/app/data sebastianbogado/find '/bin/true'
 ```
 
@@ -32,9 +34,9 @@ fuge> start
 
 ### Checking if everything worked
 
-Go [here](http://localhost:10000/api/location/list). 
+Go [here](http://localhost:10000/api/location/list).
 
-If everything was fine, the proxy at port 10000 is redirecting the 
+If everything was fine, the proxy at port 10000 is redirecting the
 request to the Mobile API, which is interacting with the Location API,
 which in turns interacts with the Stores API, who is actually gathering
 data from a db
@@ -62,8 +64,8 @@ docker-compose -f compose-dev.yml pull stores_db
 
 `fuge` was not properly terminated, and some containers were still running.
 
-Run `docker ps` and look for the container bound to that port and then 
-`docker stop <container_id>`. For instance: 
+Run `docker ps` and look for the container bound to that port and then
+`docker stop <container_id>`. For instance:
 
 ```
 $ docker ps

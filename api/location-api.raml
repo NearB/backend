@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: GitHub API
 version: v1
-baseUri: https://www.nearb.com/v1/process/api/location
+baseUri: https://www.nearb.com/v1/process/location
 mediaType:  application/json
 
 uses:
@@ -41,7 +41,7 @@ uses:
           application/json:
             type: !include types/successType.raml
 
-  /${locationId}:
+  /{locationId}:
     get:
       responses:
         200:
@@ -64,7 +64,8 @@ uses:
     description: Discover nearby stores based on geo location
     get:
       queryParameters:
-        coords: string
+        lat: integer
+        long: integer
         radio?:
           description: Search radio from coordinates, in meters
           type: integer

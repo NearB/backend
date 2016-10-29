@@ -1,6 +1,6 @@
 {
-  "name": "content",
-  "description": "content db service",
+  "name": "users",
+  "description": "users service",
   "keywords": [
     "seneca",
     "service"

@@ -1,6 +1,6 @@
 {
-  "name": "stores_management",
-  "description": "stores management service",
+  "name": "warehouse",
+  "description": "warehouse service",
   "keywords": [
     "seneca",
     "service"

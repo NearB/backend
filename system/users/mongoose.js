@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 mongoose.Promise = Promise;
 
 function connect() {
-  console.log("MONGOSE CONTENT DB PORT: "+ process.env.content_db_PORT);
-  return mongoose.connect(`mongodb://localhost:${process.env.content_db_PORT}/local`);
+  console.log("MONGOSE users_db_PORT: "+ process.env.users_db_PORT);
+  return mongoose.connect(`mongodb://localhost:${process.env.users_db_PORT}/local`);
 }
 
 

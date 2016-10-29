@@ -12,23 +12,42 @@ location:
   build: ./process/location/
   container_name: location
 
-stores_management:
-  build: ./process/stores-management/
-  container_name: stores-management
+engagement:
+  build: ./process/engagement
+  container_name: engagement
+
+accounts:
+  build: ./process/accounts
+  container_name: accounts
+
+marketing:
+  build: ./process/marketing
+  container_name: marketing
 
 warehouse:
   build: ./process/warehouse
   container_name: warehouse
 
+stores_management:
+  build: ./process/stores-management/
+  container_name: stores-management
 
 # System APIs => ./system/
 stores:
   build: ./system/stores
   container_name: stores
 
-content:
-  build: ./system/content
-  container_name: content
+products:
+  build: ./system/products
+  container_name: products
+
+campaigns:
+  build: ./system/campaigns
+  container_name: campaigns
+
+users:
+  build: ./system/users
+  container_name: users
 
 find_service:
   build: ./system/find
@@ -41,7 +60,7 @@ stores_db:
   volumes_from:
     - stores_db__data_volume
   ports:
-    - 11009:27017
+    - 11015:27017
 
 stores_db__data_volume:
   image: mongo:3.2.7
@@ -49,14 +68,40 @@ stores_db__data_volume:
     - /data/db
   command: /bin/true
 
-content_db:
+products_db:
   image: mongo:3.2.7
   volumes_from:
-    - content_db__data_volume
+    - products_db__data_volume
   ports:
-    - 11011:27017
+    - 11016:27017
 
-content_db__data_volume:
+products_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
+
+users_db:
+  image: mongo:3.2.7
+  volumes_from:
+    - users_db__data_volume
+  ports:
+    - 11017:27017
+
+users_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
+
+ads_db:
+  image: mongo:3.2.7
+  volumes_from:
+    - ads_db__data_volume
+  ports:
+    - 11018:27017
+
+ads_db__data_volume:
   image: mongo:3.2.7
   volumes:
     - /data/db
@@ -67,7 +112,7 @@ find:
   volumes_from:
     - find__data_volume
   ports:
-    - 11010:8003
+    - 11019:8003
 
 find__data_volume:
   image: sebastianbogado/find

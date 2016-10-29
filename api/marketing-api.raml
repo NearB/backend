@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: GitHub API
 version: v1
-baseUri: https://www.nearb.com/v1/process/api/marketing
+baseUri: https://www.nearb.com/v1/process/marketing
 mediaType:  application/json
 
 uses:
@@ -24,7 +24,7 @@ uses:
         body:
           application/json:
             type: marketing.SuccessAd
-  /${adId}:
+  /{adId}:
     delete:
       responses:
         200:
@@ -49,7 +49,7 @@ uses:
           application/json:
             type: marketing.SuccessCampaign
 
-  /${campaignId}:
+  /{campaignId}:
     put:
       body:
         application/json:

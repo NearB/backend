@@ -4,24 +4,37 @@ SERVICE_PORT=20000
 
 # Services
 
-##  Experience Services
+##  Experience Services 1000x
 mobile_api_PORT=10000
 web_api_PORT=10001
 
-##  Process Services
-location_PORT=10002
-stores_management_PORT=10003
-warehouse_PORT=10004
+##  Process Services 1001x
+location_PORT=10012
+stores_management_PORT=10013
+warehouse_PORT=10014
+marketing_PORT=10015
+engagement_PORT=10016
+accounts_PORT=10017
 
 ##  System Services => 1002x
-stores_PORT=10005
-content_PORT=10006
-find_service_PORT=10007
+stores_PORT=10021
+products_PORT=10022
+find_service_PORT=10023
+users_PORT=10024
+campaigns_PORT=10025
 
 # Storage and other infra => 110xx
-stores_db__data_volume_PORT=10008
-content_db__data_volume_PORT=10009
-find__data_volume_PORT=10010
-find_PORT=11011
-stores_db_PORT=11012
-content_db_PORT=11013
+stores_db_PORT=11015
+stores_db__data_volume_PORT=11015
+
+products_db_PORT=11016
+products_db__data_volume_PORT=11016
+
+users_db_PORT=11017
+users_db__data_volume_PORT=11017
+
+ads_db_PORT=11018
+ads_db__data_volume_PORT=11018
+
+find_PORT=11019
+find__data_volume_PORT=11019

@@ -1,7 +1,7 @@
 #%RAML 1.0
 title: GitHub API
 version: v1
-baseUri: https://www.nearb.com/v1/api/engagement
+baseUri: https://www.nearb.com/v1/process/
 mediaType:  application/json
 
 uses:
@@ -12,4 +12,11 @@ uses:
 
 /promotions:
   get:
+    description: List all the promotions near a given location
     queryParameters:
+      tags?:
+        type: string[]
+        description: Set of tags used to filter what ads should be shown to the user
+      locations?:
+        type: string
+        description: csv list of location ids

@@ -14,6 +14,26 @@ types:
         type: file
         fileTypes: ['image/jpeg', 'image/png']
 
+  CartProduct:
+    type: Product
+    properties:
+      quantity: integer
+      price: number
+
+  Cart:
+    description: Keeps track of the products while the user is buying
+    type: object
+    properties:
+      id: string
+      total: number
+      products: CartProduct[]
+      discount?: integer
+
+  SuccessCart:
+    type: !include successType.raml
+    properties:
+      data: Cart
+
   SuccessProduct:
     type: !include successType.raml
     properties:

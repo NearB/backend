@@ -4,7 +4,7 @@ const seneca = require('seneca')();
 const mongoose = require('./mongoose');
 mongoose.Promise = require('bluebird');
 
-const Store = require('./models').Store;
+const Stores = require('./models').Stores;
 
 const successCb = (cb) => {
   return res => {
@@ -13,21 +13,20 @@ const successCb = (cb) => {
 };
 
 const execute = (query, cb) => {
-
   const promise = query.select('-__v').lean();
-
   if (!cb) {
     return promise;
   }
-
   promise
       .then(successCb(cb))
       .catch(cb);
 };
 
+// =============== create ===============
+
 seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
   const newStore = args.store;
-  new Store(newStore)
+  new Stores.Store(newStore)
       .save()
       .then(saved => {
         newStore._id = saved.id;
@@ -36,46 +35,46 @@ seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
       .catch(cb);
 });
 
-// Query
+// =============== read ===============
 
-seneca.add({role: 'stores', cmd: 'find'}, (args, cb) => {
-  execute(Store.find(args.where, args.select), cb);
+seneca.add({role: 'stores', cmd: 'read'}, (args, cb) => {
+  execute(Stores.Store.find(args.where, args.select), cb);
 });
 
-seneca.add({role: 'stores', cmd: 'find', type: 'one'}, (args, cb) => {
-  execute(Store.findOne(args.where, args.select, args.ops), cb);
+seneca.add({role: 'stores', cmd: 'read', type: 'one'}, (args, cb) => {
+  execute(Stores.Store.findOne(args.where, args.select, args.ops), cb);
 });
 
-seneca.add({role: 'stores', cmd: 'find', type: 'id'}, (args, cb) => {
-  execute(Store.findById(args.id, args.select, args.ops), cb);
-});
-
-
-// Remove
-
-seneca.add({role: 'stores', cmd: 'remove', type: 'id'}, (args, cb) => {
-  execute(Store.findByIdAndRemove(args.id, args.ops), cb);
-});
-
-seneca.add({role: 'stores', cmd: 'remove', type: 'one'}, (args, cb) => {
-  execute(Store.findOneAndRemove(args.where, args.ops), cb);
+seneca.add({role: 'stores', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Stores.Store.findById(args.id, args.select, args.ops), cb);
 });
 
 
-// Update
+// =============== delete ===============
+
+seneca.add({role: 'stores', cmd: 'delete', type: 'id'}, (args, cb) => {
+  execute(Stores.Store.findByIdAndRemove(args.id, args.ops), cb);
+});
+
+seneca.add({role: 'stores', cmd: 'delete', type: 'one'}, (args, cb) => {
+  execute(Stores.Store.findOneAndRemove(args.where, args.ops), cb);
+});
+
+
+// =============== update ===============
 
 seneca.add({role: 'stores', cmd: 'update', type: 'id'}, (args, cb) => {
-  execute(Store.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+  execute(Stores.Store.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
 });
 
 seneca.add({role: 'stores', cmd: 'update', type: 'one'}, (args, cb) => {
-  execute(Store.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+  execute(Stores.Store.findOneAndUpdate(args.where, args.doc, args.ops), cb);
 });
 
 seneca.add({role: 'stores', cmd: 'update', type: 'bulk'}, (args, cb) => {
-  execute(Store.find(args.where))
+  execute(Stores.Store.find(args.where))
       .then(oldDocs => {
-        execute(Store.update(args.where, args.doc, args.ops))
+        execute(Stores.Store.update(args.where, args.doc, args.ops))
             .then((result) => {
               cb(null, {
                 updateResult: result,
@@ -94,6 +93,7 @@ seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 mongoose.connection.once('open', function () {
   var stores = [
     {
+      id: '00001',
       name: 'Starbucks',
       owner: 'Wealthy Man',
       location: {
@@ -101,6 +101,7 @@ mongoose.connection.once('open', function () {
       }
     },
     {
+      id: '00002',
       name: 'Güll',
       owner: 'StarWars Fan',
       location: {
@@ -108,6 +109,7 @@ mongoose.connection.once('open', function () {
       }
     },
     {
+      id: '00003',
       name: 'Barbas',
       owner: 'MMAGuy',
       location: {
@@ -115,6 +117,7 @@ mongoose.connection.once('open', function () {
       }
     },
     {
+      id: '00004',
       name: 'PH\'s',
       owner: 'ThePampa',
       location: {
@@ -123,9 +126,9 @@ mongoose.connection.once('open', function () {
     }
   ];
 
-  Store.count()
+  Stores.Store.count()
       .then(function (count) {
-        if (!count) return Store.create(stores);
+        if (!count) return Stores.Store.create(stores);
       })
       .then(function () {
         console.log('Stores Online');

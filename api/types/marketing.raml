@@ -34,8 +34,8 @@ types:
         description: Set of Tags used to identify when to apply this Campaing
         type: string[]
       ads:
-        description: Set of Ads that are part of this Campaign
-        type: Ad[]
+        description: Set of AdIds that are part of this Campaign
+        type: string[]
       expiration?:
         description: |
           Date in which this Campaing ends and stops being shown even if the are tag matches.
@@ -58,3 +58,7 @@ types:
       expiration?:
         type: datetime-only
         example: 2016-12-24T22:00:00
+      _links:
+        type: object
+        properties:
+          access: string

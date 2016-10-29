@@ -1,0 +1,59 @@
+#%RAML 1.0
+title: GitHub API
+version: v1
+baseUri: https://www.nearb.com/v1/process/
+mediaType:  application/json
+
+uses:
+  users: types/users.raml
+  alerts: types/alerts.raml
+
+/users:
+  post:
+    body:
+      application/json:
+        type: users.Owner | users.Client
+    responses:
+      200:
+        description: Returns the updated User
+        body:
+          application/json:
+            type: users.Owner | users.Client
+
+  /{userId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: users.SuccessUser
+    put:
+      body:
+        application/json:
+          type: users.Owner | users.Client
+      responses:
+        200:
+          description: Returns the updated User
+          body:
+            application/json:
+              type: users.Owner | users.Client
+
+    /alerts:
+      get:
+        description: Lists all the Alerts a given user has configured
+        responses:
+          200:
+            body:
+              application/json:
+                type: alerts.SuccessAlerts
+      post:
+        description: Associates a new Alert to the pool of Alerts that can be triggered for a given user
+        body:
+          application/json:
+            type: alerts.Alert
+
+        responses:
+          200:
+            body:
+              application/json:
+                type: alerts.SuccessAlerts

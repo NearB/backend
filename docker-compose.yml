@@ -21,20 +21,40 @@ location:
   ports:
     - 10101:20011
 
-stores_management:
-  build: ./process/stores-management/
-  container_name: stores-management
+engagement:
+  build: ./process/engagement
+  container_name: engagement
   env_file: './env'
   ports:
     - 10102:20012
+
+accounts:
+  build: ./process/accounts/
+  container_name: accounts
+  env_file: './env'
+  ports:
+    - 10103:20013
+
+marketing:
+  build: ./process/marketing
+  container_name: marketing
+  env_file: './env'
+  ports:
+    - 10104:20014
 
 warehouse:
   build: ./process/warehouse
   container_name: warehouse
   env_file: './env'
   ports:
-    - 10103:20013
+    - 10105:20015
 
+stores_management:
+  build: ./process/stores-management/
+  container_name: stores-management
+  env_file: './env'
+  ports:
+    - 10106:20016
 
 
 # System APIs => 10011x:2002x
@@ -52,12 +72,26 @@ find_service:
   ports:
     - 10112:20022
 
-content:
-  build: ./system/content
-  container_name: content
+products:
+  build: ./system/products
+  container_name: products
   env_file: './env'
   ports:
     - 10113:20023
+
+users:
+  build: ./system/users
+  container_name: users
+  env_file: './env'
+  ports:
+    - 10114:20024
+
+campaigns:
+  build: ./system/campaigns
+  container_name: campaigns
+  env_file: './env'
+  ports:
+    - 10115:20025
 
 # Storages & other infra
 stores_db:
@@ -73,14 +107,40 @@ stores_db__data_volume:
     - /data/db
   command: /bin/true
 
-content_db:
+products_db:
   image: mongo:3.2.7
   volumes_from:
-    - content_db__data_volume
+    - products_db__data_volume
+  ports:
+    - 11016:27017
+
+products_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
+
+users_db:
+  image: mongo:3.2.7
+  volumes_from:
+    - users_db__data_volume
   ports:
     - 11017:27017
 
-content_db__data_volume:
+users_db__data_volume:
+  image: mongo:3.2.7
+  volumes:
+    - /data/db
+  command: /bin/true
+
+ads_db:
+  image: mongo:3.2.7
+  volumes_from:
+    - ads_db__data_volume
+  ports:
+    - 11018:27017
+
+ads_db__data_volume:
   image: mongo:3.2.7
   volumes:
     - /data/db
@@ -91,7 +151,7 @@ find:
   volumes_from:
     - find__data_volume
   ports:
-    - 11016:8003
+    - 11019:8003
 
 find__data_volume:
   image: sebastianbogado/find

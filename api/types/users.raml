@@ -16,14 +16,14 @@ types:
   Owner:
     type: User
     properties:
-      stores: stores.Store[]
+      stores: string[]
 
   Client:
     type: User
     properties:
       favorites:
         description: Set of Locations where this is an usual Client
-        type: locations.Location[]
+        type: string[]
       filters:
         description: Preferences filters for narrowing marketing targets
         type: string[]
