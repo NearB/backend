@@ -10,11 +10,13 @@ uses:
 
 /locations:
   get:
-    queryString:
-      description: |
-        Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
-        the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-      example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+    queryParameters:
+      beacons:
+        type: string
+        description: |
+          Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
+          the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
@@ -49,6 +51,16 @@ uses:
             application/json:
               type: locations.SuccessLocation
 
+    put:
+      body:
+        application/json:
+          type: locations.Location
+      responses:
+        200:
+          body:
+            application/json:
+              type: locations.SuccessLocation
+
     delete:
       description: Removes the location identified by <<locationId>>
       responses:
@@ -56,35 +68,28 @@ uses:
           description: Returns the remaining locations
           body:
             application/json:
-              type: locations.SuccessLocations
+              type: !include types/successType.raml
+
 /discover:
   description: Endpoint used to discover stores based on location.
-
-  /geo:
-    description: Discover nearby stores based on geo location
-    get:
-      queryParameters:
-        lat: integer
-        long: integer
-        radio?:
-          description: Search radio from coordinates, in meters
-          type: integer
-      responses:
-        200:
-          body:
-            application/json:
-              type: stores.SuccessStores
-
-  /beacon:
-    description: Discover nearby stores beacons fingerprints
-    get:
-      queryString:
+  get:
+    queryParameters:
+      geo?:
+        type: string
         description: |
+          Discover nearby stores based on geo location
+          csv coordinates with the format: lat,long,searchRadio with radio in meters
+        example: ?geo=-34.6375814,-58.4344577,15z,1000
+      beacons?:
+        type: string
+        description: |
+          Discover nearby stores beacons fingerprints
           Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
           the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
-      responses:
-        200:
-          body:
-            application/json:
-              type: stores.SuccessStores
+        example: ?beacon=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+      locations?:
+        type: string
+        description: |
+          Discover nearby stores locations
+          a csv collection of locationId as provided by this service
+        example: ?locations=baoou3223g4,baiubkh231g4

@@ -26,11 +26,13 @@ const execute = (query, cb) => {
 // =============== create ===============
 
 seneca.add({role: 'campaigns', cmd: 'create'}, (args, cb) => {
-  new Marketing.Campaign(newStore)
+  const newCampaign = args.campaign;
+  new Marketing.Campaign(newCampaign)
       .save()
       .then(saved => {
-        newStore._id = saved.id;
-        cb(null, newStore);
+        newCampaign._id = saved._id;
+        //Doing this to replicate the '(-__v) + toObject'
+        cb(null, newCampaign);
       })
       .catch(cb);
 });
@@ -41,13 +43,13 @@ seneca.add({role: 'campaigns', cmd: 'read'}, (args, cb) => {
   execute(Marketing.Campaign.find(args.where, args.select), cb);
 });
 
-seneca.add({role: 'campaigns', cmd: 'read', type: 'one'}, (args, cb) => {
-  execute(Marketing.Campaign.findOne(args.where, args.select, args.ops), cb);
-});
-
 seneca.add({role: 'campaigns', cmd: 'read', type: 'id'}, (args, cb) => {
   execute(Marketing.Campaign.findById(args.id, args.select, args.ops), cb);
 });
+
+// seneca.add({role: 'campaigns', cmd: 'read', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Campaign.findOne(args.where, args.select, args.ops), cb);
+// });
 
 
 // =============== delete ===============
@@ -56,46 +58,49 @@ seneca.add({role: 'campaigns', cmd: 'delete', type: 'id'}, (args, cb) => {
   execute(Marketing.Campaign.findByIdAndRemove(args.id, args.ops), cb);
 });
 
-seneca.add({role: 'campaigns', cmd: 'delete', type: 'one'}, (args, cb) => {
-  execute(Marketing.Campaign.findOneAndRemove(args.where, args.ops), cb);
-});
+// seneca.add({role: 'campaigns', cmd: 'delete', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Campaign.findOneAndRemove(args.where, args.ops), cb);
+// });
 
 
 // =============== update ===============
 
 seneca.add({role: 'campaigns', cmd: 'update', type: 'id'}, (args, cb) => {
-  execute(Marketing.Campaign.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+  const options = Object.assign({}, {new: true}, args.ops)
+  execute(Marketing.Campaign.findByIdAndUpdate(args.id, args.doc, options), cb);
 });
 
-seneca.add({role: 'campaigns', cmd: 'update', type: 'one'}, (args, cb) => {
-  execute(Marketing.Campaign.findOneAndUpdate(args.where, args.doc, args.ops), cb);
-});
-
-seneca.add({role: 'campaigns', cmd: 'update', type: 'bulk'}, (args, cb) => {
-  execute(Marketing.Campaign.find(args.where))
-      .then(oldDocs => {
-        execute(Marketing.Campaign.update(args.where, args.doc, args.ops))
-            .then((result) => {
-              cb(null, {
-                updateResult: result,
-                modified: oldDocs
-              })
-            })
-            .catch(cb);
-      })
-      .catch(cb);
-});
+//REVIEW if necessary
+// seneca.add({role: 'campaigns', cmd: 'update', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Campaign.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+// });
+//
+// seneca.add({role: 'campaigns', cmd: 'update', type: 'bulk'}, (args, cb) => {
+//   execute(Marketing.Campaign.find(args.where))
+//       .then(oldDocs => {
+//         execute(Marketing.Campaign.update(args.where, args.doc, args.ops))
+//             .then((result) => {
+//               cb(null, {
+//                 updateResult: result,
+//                 modified: oldDocs
+//               })
+//             })
+//             .catch(cb);
+//       })
+//       .catch(cb);
+// });
 
 // =============== Ads ===============
 // =============== create ===============
 
 seneca.add({role: 'ads', cmd: 'create'}, (args, cb) => {
-
-  new Marketing.Ad(newStore)
+  const newAd = args.ad;
+  new Marketing.Ad(newAd)
       .save()
       .then(saved => {
-        newStore._id = saved.id;
-        cb(null, newStore);
+        newAd._id = saved._id;
+        //Doing this to replicate the '(-__v) + toObject'
+        cb(null, newAd);
       })
       .catch(cb);
 });
@@ -106,14 +111,13 @@ seneca.add({role: 'ads', cmd: 'read'}, (args, cb) => {
   execute(Marketing.Ad.find(args.where, args.select), cb);
 });
 
-seneca.add({role: 'ads', cmd: 'read', type: 'one'}, (args, cb) => {
-  execute(Marketing.Ad.findOne(args.where, args.select, args.ops), cb);
-});
-
 seneca.add({role: 'ads', cmd: 'read', type: 'id'}, (args, cb) => {
   execute(Marketing.Ad.findById(args.id, args.select, args.ops), cb);
 });
 
+// seneca.add({role: 'ads', cmd: 'read', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Ad.findOne(args.where, args.select, args.ops), cb);
+// });
 
 // =============== delete ===============
 
@@ -121,35 +125,37 @@ seneca.add({role: 'ads', cmd: 'delete', type: 'id'}, (args, cb) => {
   execute(Marketing.Ad.findByIdAndRemove(args.id, args.ops), cb);
 });
 
-seneca.add({role: 'ads', cmd: 'delete', type: 'one'}, (args, cb) => {
-  execute(Marketing.Ad.findOneAndRemove(args.where, args.ops), cb);
-});
+// seneca.add({role: 'ads', cmd: 'delete', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Ad.findOneAndRemove(args.where, args.ops), cb);
+// });
 
 
 // =============== update ===============
 
 seneca.add({role: 'ads', cmd: 'update', type: 'id'}, (args, cb) => {
-  execute(Marketing.Ad.findByIdAndUpdate(args.id, args.doc, args.ops), cb);
+  const options = Object.assign({}, {new: true}, args.ops)
+  execute(Marketing.Ad.findByIdAndUpdate(args.id, args.doc, options), cb);
 });
 
-seneca.add({role: 'ads', cmd: 'update', type: 'one'}, (args, cb) => {
-  execute(Marketing.Ad.findOneAndUpdate(args.where, args.doc, args.ops), cb);
-});
-
-seneca.add({role: 'ads', cmd: 'update', type: 'bulk'}, (args, cb) => {
-  execute(Marketing.Ad.find(args.where))
-      .then(oldDocs => {
-        execute(Marketing.Ad.update(args.where, args.doc, args.ops))
-            .then((result) => {
-              cb(null, {
-                updateResult: result,
-                modified: oldDocs
-              })
-            })
-            .catch(cb);
-      })
-      .catch(cb);
-});
+//REVIEW if necessary
+// seneca.add({role: 'ads', cmd: 'update', type: 'one'}, (args, cb) => {
+//   execute(Marketing.Ad.findOneAndUpdate(args.where, args.doc, args.ops), cb);
+// });
+//
+// seneca.add({role: 'ads', cmd: 'update', type: 'bulk'}, (args, cb) => {
+//   execute(Marketing.Ad.find(args.where))
+//       .then(oldDocs => {
+//         execute(Marketing.Ad.update(args.where, args.doc, args.ops))
+//             .then((result) => {
+//               cb(null, {
+//                 updateResult: result,
+//                 modified: oldDocs
+//               })
+//             })
+//             .catch(cb);
+//       })
+//       .catch(cb);
+// });
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
@@ -238,10 +244,14 @@ mongoose.connection.once('open', function () {
 
   Marketing.Campaign.count()
       .then(function (count) {
-        if (!count) return Marketing.Campaign.create(campaignData);
+        if (!count && !process.env.TESTING){
+          return Marketing.Campaign.create(campaignData);
+        }
       })
       .then(function () {
-        console.log('Campaigns Online');
+        if (!process.env.TESTING){
+          console.log('Campaigns Online');
+        }
       })
       .catch(function (err) {
         console.log(err);
@@ -249,10 +259,14 @@ mongoose.connection.once('open', function () {
 
   Marketing.Ad.count()
       .then(function (count) {
-        if (!count) return Marketing.Ad.create(adsData);
+        if (!count && !process.env.TESTING){
+          return Marketing.Ad.create(adsData);
+        }
       })
       .then(function () {
-        console.log('Ads Online');
+        if (!process.env.TESTING){
+          console.log('Ads Online');
+        }
       })
       .catch(function (err) {
         console.log(err);

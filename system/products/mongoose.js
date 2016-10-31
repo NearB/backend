@@ -1,8 +1,17 @@
 var mongoose = require('mongoose');
+var mockgoose = require('mockgoose');
+
 mongoose.Promise = Promise;
 
 function connect() {
-  return mongoose.connect(`mongodb://localhost:${process.env.products_db_PORT}/local`);
+  if (process.env.TESTING){
+    console.log("MONGOOSE TESTING MODE");
+    mockgoose(mongoose).then(function() {
+        mongoose.connect('mongodb://example.com/TestingDB');
+    });
+  } else {
+    return mongoose.connect(`mongodb://localhost:${process.env.products_db_PORT}/local`);
+  }
 }
 
 

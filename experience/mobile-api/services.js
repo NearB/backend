@@ -66,52 +66,25 @@ module.exports = (app) => {
   app.options('/api/stores/:storeId', cors(corsOptions));
   app.options('/api/promotions', cors(corsOptions));
 
-// =============== location ===============
+// =============== stores-management ===============
 
-  app.get('/api/locations', cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
+  // =============== ?locations=locaitonId1,locationId2 ===============
+  // =============== ?beacons=?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+  app.get('/api/stores', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'stores', cmd: req.method}, plain(req)), res);
   });
 
-  app.post('/api/locations', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
+  app.get('/api/store/:storeId', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
+  app.put('/api/store/:storeId', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
   });
 
-  app.put('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
-  });
-
-// =============== engagement ===============
-
-  app.post('/api/carts/', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'carts', cmd: req.method}, plain(req)), res);
-  });
-
-  app.get('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
-  });
-
-  app.put('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
-  });
-
-  app.delete('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
-  });
-
-  app.put('/api/carts/:cartId/products/:productId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'product', cmd: req.method}, plain(req)), res);
-  });
-
-  app.delete('/api/carts/:cartId/products/:productId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'product', cmd: req.method}, plain(req)), res);
-  });
-
-  app.get('/api/promotions', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'promotions', cmd: req.method}, plain(req)), res);
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/store/:storeId/products', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
 // =============== accounts ===============
@@ -136,21 +109,65 @@ module.exports = (app) => {
     reply(act({role: 'accounts', resource:'alerts', cmd: req.method}, plain(req)), res);
   });
 
-// =============== stores-management ===============
 
-  app.get('/api/stores', cors(corsOptions), (req, res) => {
-    reply(act({role: 'stores-management', resource:'stores', cmd: req.method}, plain(req)), res);
+// =============== engagement ===============
+
+// =============== ?tags=tag01,tag02 ===============
+// =============== ?locations=locaitonId1,locationId2 ===============
+// =============== ?beacons=?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+  app.get('/api/promotions', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'promotions', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/store/:storeId', cors(corsOptions), (req, res) => {
-    reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.post('/api/carts/', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'carts', cmd: req.method}, plain(req)), res);
   });
 
-  app.put('/api/store/:storeId', cors(corsOptions), (req, res) => {
-    reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/store/:storeId/products', cors(corsOptions), (req, res) => {
-    reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
+  // =============== ?checkout=true ===============
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.put('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.delete('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?quantity=1 ===============
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.put('/api/carts/:cartId/products/:productId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'product', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.delete('/api/carts/:cartId/products/:productId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'product', cmd: req.method}, plain(req)), res);
+  });
+
+
+// =============== location ===============
+
+  // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+  app.get('/api/locations', cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
+  });
+
+  app.put('/api/locations', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
+  });
+
+  app.get('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
+  });
+
+  app.put('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
   });
 };

@@ -258,15 +258,6 @@ uses:
             application/json:
               type: users.Owner | users.Client
 
-    /stores:
-      get:
-        description: List the stores a given user is Owner of, or empty otherwise
-        responses:
-          200:
-            body:
-              application/json:
-                type: stores.SuccessStores
-
 /locations:
   get:
     responses:

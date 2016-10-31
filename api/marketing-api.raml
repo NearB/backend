@@ -50,6 +50,15 @@ uses:
             type: marketing.SuccessCampaign
 
   /{campaignId}:
+    get:
+      queryParameters:
+        tags: string[]
+      responses:
+        200:
+          body:
+            application/json:
+              type: marketing.SuccessCampaign
+
     put:
       body:
         application/json:

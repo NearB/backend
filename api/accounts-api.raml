@@ -9,6 +9,14 @@ uses:
   alerts: types/alerts.raml
 
 /users:
+  get:
+    queryParameters:
+      preferences: string[]
+    responses:
+      200:
+        body:
+          application/json:
+            type: users.SuccessUsers
   post:
     body:
       application/json:
@@ -37,6 +45,13 @@ uses:
           body:
             application/json:
               type: users.Owner | users.Client
+
+    delete:
+      responses:
+        200:
+          body:
+            application/json:
+              type: !include types/successType.raml
 
     /alerts:
       get:

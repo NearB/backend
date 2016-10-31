@@ -20,22 +20,33 @@ seneca.client({
 
 
 // =============== /locations ===============
+
+// =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
 seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'stores', cmd: 'find'})
+  act({role: '', cmd: 'status'})
+    .then(res => {
+      return {data: res};
+    })
     .then(result => {
-      // Perform some aggregation / transformation on the results
-      var locationResult = {
-        timestamp: new Date(),
-        stores: result
-      };
-
-      callback(null, locationResult);
+      callback(null, result);
     })
     .catch(callback);
+
+  // act({role: 'stores', cmd: 'find'})
+  //   .then(result => {
+  //     // Perform some aggregation / transformation on the results
+  //     var locationResult = {
+  //       timestamp: new Date(),
+  //       stores: result
+  //     };
+  //
+  //     callback(null, locationResult);
+  //   })
+  //   .catch(callback);
 });
 
-seneca.add({role: 'location', resource:'locations', cmd: 'POST'}, (args, callback) => {
+seneca.add({role: 'location', resource:'locations', cmd: 'PUT'}, (args, callback) => {
 
   act({role: 'find', cmd: 'status'})
     .then(res => {
@@ -44,12 +55,23 @@ seneca.add({role: 'location', resource:'locations', cmd: 'POST'}, (args, callbac
     .then(result => {
       callback(null, result);
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(callback);
 });
 
-// =============== location/:locationId ===============
+//removes the locations that match the given Fingerprint filter
+seneca.add({role: 'location', resource:'locations', cmd: 'DELETE'}, (args, callback) => {
+
+  act({role: 'find', cmd: 'status'})
+    .then(res => {
+      return {data: res};
+    })
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(callback);
+});
+
+// =============== /location/:locationId ===============
 seneca.add({role: 'location', resource:'location', cmd: 'GET'}, (args, callback) => {
 
   act({role: 'find', cmd: 'status'})
@@ -59,9 +81,7 @@ seneca.add({role: 'location', resource:'location', cmd: 'GET'}, (args, callback)
     .then(result => {
       callback(null, result);
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(callback);
 });
 
 seneca.add({role: 'location', resource:'location', cmd: 'PUT'}, (args, callback) => {
@@ -73,9 +93,7 @@ seneca.add({role: 'location', resource:'location', cmd: 'PUT'}, (args, callback)
     .then(result => {
       callback(null, result);
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(callback);
 });
 
 seneca.add({role: 'location', resource:'location', cmd: 'DELETE'}, (args, callback) => {
@@ -87,9 +105,21 @@ seneca.add({role: 'location', resource:'location', cmd: 'DELETE'}, (args, callba
     .then(result => {
       callback(null, result);
     })
-    .catch(err => {
-      console.log(err);
-    });
+    .catch(callback);
+});
+
+// =============== /discover ===============
+
+// =============== ?geo=-34.6375814,-58.4344577,15z,1000 ===============
+// =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+// =============== ?locations=baoou3223g4,baiubkh231g4 ===============
+seneca.add({role: 'location', resource:'discover', cmd: 'GET'}, (args, callback) => {
+
+  act({role: 'cartProduct', cmd: 'delete', type:'id'}, args)
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
 });
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});

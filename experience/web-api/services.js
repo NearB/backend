@@ -80,7 +80,7 @@ module.exports = (app) => {
   app.options('/api/locations/:locationId', cors(corsOptions));
 
 
-  // =============== stores ===============
+// =============== stores ===============
 
   app.get('/api/stores', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'stores', cmd: req.method}, plain(req)), res);
@@ -125,7 +125,7 @@ module.exports = (app) => {
   });
 
 
-  // =============== marketing ===============
+// =============== marketing ===============
 
   app.get('/api/marketing/ads', cors(corsOptions), (req, res) => {
     reply(act({role: 'marketing', resource:'ads', cmd: req.method}, plain(req)), res);
@@ -159,7 +159,7 @@ module.exports = (app) => {
     reply(act({role: 'marketing', resource:'campaign', cmd: req.method}, plain(req)), res);
   });
 
-  // =============== products ===============
+// =============== products ===============
 
   app.get('/api/products', cors(corsOptions), (req, res) => {
     reply(act({role: 'warehouse', resource:'products', cmd: req.method}, plain(req)), res);
@@ -181,8 +181,9 @@ module.exports = (app) => {
     reply(act({role: 'warehouse', resource:'product', cmd: req.method}, plain(req)), res);
   });
 
-  // =============== accounts ===============
+// =============== accounts ===============
 
+  // =============== ?preferences=tag02,tag02 ===============
   app.get('/api/users', cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'users', cmd: req.method}, plain(req)), res);
   });
@@ -203,11 +204,8 @@ module.exports = (app) => {
     reply(act({role: 'accounts', resource:'user', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/users/:userId/stores', cors(corsOptions), (req, res) => {
-    reply(act({role: 'accounts', resource:'stores', cmd: req.method}, plain(req)), res);
-  });
 
-  // =============== location ===============
+// =============== location ===============
 
   app.get('/api/locations', cors(corsOptions), (req, res) => {
     reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);

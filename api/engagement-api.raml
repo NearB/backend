@@ -10,9 +10,19 @@ uses:
   marketing: types/marketing.raml
   products: types/product.raml
 
+traits:
+  engaged:
+    queryParameters:
+      engagement:
+        type: string
+        description: |
+          The token that was used to grant access to this Store.
+          This toke will be auto generated when fetching the Ad, and embedded in the store link.
+        example: ?engagement=J1qK1c18UUGJFAzz9xnH56584l4
+
+
 /promotions:
   get:
-    description: List all the promotions near a given location
     queryParameters:
       tags?:
         type: string[]
@@ -20,3 +30,58 @@ uses:
       locations?:
         type: string
         description: csv list of location ids
+      beacon?:
+        type: string
+        description: |
+          Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
+          the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+    responses:
+      200:
+        body:
+          application/json:
+            type: marketing.SuccessAds
+
+/carts:
+  post:
+    is: [engaged]
+    responses:
+      200:
+        body:
+          application/json:
+            type: products.SuccessCart
+
+  /{cartId}:
+    get:
+      description: List the products for the given Store
+      is: [engaged]
+      responses:
+        200:
+          body:
+            application/json:
+              type: products.SuccessCart
+    put:
+      description: |
+        Update cart content.
+        Products can be added (put with body) and cleared (checkout)
+      is: [engaged]
+      queryParameters:
+        checkout?: boolean
+      body:
+        application/json:
+          type: products.CartProduct[]
+
+    delete:
+      description: Close the cart and delete without checkout
+      is: [engaged]
+
+    /products/{productId}:
+      put:
+        description: Updates the amount of items of this product kind
+        is: [engaged]
+        queryParameters:
+          quantity: integer
+
+      delete:
+        description: All the items of this product from the cart
+        is: [engaged]

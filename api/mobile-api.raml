@@ -12,6 +12,17 @@ uses:
   products: types/product.raml
   alerts: types/alerts.raml
 
+traits:
+  engaged:
+    queryParameters:
+      engagement:
+        type: string
+        description: |
+          The token that was used to grant access to this Store.
+          This toke will be auto generated when fetching the Ad, and embedded in the store link.
+        example: ?engagement=J1qK1c18UUGJFAzz9xnH56584l4
+
+
 /stores:
   get:
     description: Lists all the stores, filtered by position if location data is provided
@@ -19,7 +30,7 @@ uses:
       locations?:
         type: string
         description: csv list of location ids
-      beacon?:
+      beacons?:
         type: string
         description: |
           Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
@@ -53,12 +64,8 @@ uses:
     /products:
       get:
         description: List the products for the given Store
+        is: [engaged]
         queryParameters:
-          engagement:
-            type: string
-            description: |
-              The token that was used to grant access to this Store.
-              This toke will be auto generated when fetching the Ad, and embedded in the store link.
           tags?:
             type: string[]
             description: Set of tags used to filter the products
@@ -140,12 +147,7 @@ uses:
 
 /carts:
   post:
-    queryParameters:
-      engagement:
-        type: string
-        description: |
-          The token that was used to grant access to this Store.
-          This toke will be auto generated when fetching the Ad, and embedded in the store link.
+    is: [engaged]
     responses:
       200:
         body:
@@ -155,12 +157,7 @@ uses:
   /{cartId}:
     get:
       description: List the products for the given Store
-      queryParameters:
-        engagement:
-          type: string
-          description: |
-            The token that was used to grant access to this Store.
-            This toke will be auto generated when fetching the Ad, and embedded in the store link.
+      is: [engaged]
       responses:
         200:
           body:
@@ -170,8 +167,8 @@ uses:
       description: |
         Update cart content.
         Products can be added (put with body) and cleared (checkout)
+      is: [engaged]
       queryParameters:
-        engagement: string
         checkout?: boolean
       body:
         application/json:
@@ -179,8 +176,7 @@ uses:
 
     delete:
       description: Close the cart and delete without checkout
-      queryParameters:
-        engagement: string
+
 
     /products/{productId}:
       put:
@@ -193,12 +189,19 @@ uses:
 
 /locations:
   get:
+    queryParameters:
+      beacons:
+        type: string
+        description: |
+          Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
+          the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
           application/json:
             type: locations.SuccessLocations
-  post:
+  put:
     body:
       application/json:
         type: locations.TrackingInformation

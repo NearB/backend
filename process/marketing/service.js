@@ -42,6 +42,7 @@ seneca.add({role: 'marketing', resource:'ad', cmd: 'DELETE'}, (args, callback) =
 });
 
 // =============== marketing/campaigns ===============
+// =============== ?tags=tag01,tag02 ===============
 seneca.add({role: 'marketing', resource:'campaigns', cmd: 'GET'}, (args, callback) => {
 
   act({role: 'content', cmd: 'add'}, args)

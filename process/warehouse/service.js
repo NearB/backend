@@ -13,6 +13,8 @@ seneca.client({
 });
 
 // =============== products ===============
+
+// =============== ?tags=tag01,tag02 ===============
 seneca.add({role: 'warehouse', resource:'products', cmd: 'GET'}, (args, callback) => {
 
   act({role: 'content', cmd: 'add'}, args)
