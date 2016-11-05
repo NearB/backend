@@ -1,7 +1,7 @@
 'use strict';
 
 process.env.SERVICE_HOST = 'localhost';
-process.env.SERVICE_PORT = 3001;
+process.env.SERVICE_PORT = 3101;
 
 // Necessary for using mockgoose connection wrapper
 process.env.TESTING = true;
@@ -68,6 +68,7 @@ test('test stores read by id', (t) => {
     t.same(result, store, "same store");
   });
 });
+
 
 test('test stores update by id', (t) => {
   t.plan(4);

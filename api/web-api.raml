@@ -103,6 +103,8 @@ uses:
 /marketing:
   /ads:
     get:
+      queryParameters:
+        tags: string[]
       description: Lists all the available Ads that can be used by the stores
       responses:
         200:
@@ -127,6 +129,8 @@ uses:
                 type: marketing.SuccessAds
   /campaigns:
     get:
+      queryParameters:
+        tags: string[]
       description: Lists all the available Campaings that can be used by the stores
       responses:
         200:

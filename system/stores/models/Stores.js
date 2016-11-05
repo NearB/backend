@@ -12,8 +12,8 @@ const ProductStock = mongoose.model('ProductStock', productStockSchema);
 const StoreModel = {
   name:{ type: String, required:[true, 'Missing required field [name]']},
   ownerId:{ type: String, required:[true, 'Missing required field [ownerId]']},
-  stock:{ type: [productStockSchema], required:[true, 'Missing required field [stock]']},
   locations:{ type: [String], required:[true, 'Missing required field [locations]']},
+  stock: [productStockSchema],
   adTags: [String],
   campaignTags: [String]
 };

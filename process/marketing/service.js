@@ -5,17 +5,39 @@ const seneca = require('seneca')();
 
 const act = Promise.promisify(seneca.act, {context: seneca});
 
-// System APIs
-seneca.client({
-  host: process.env.PROXY_HOST,
-  port: process.env.campaigns_PORT,
-  pin: {role: 'campaigns'}
-});
+if (process.env.TESTING){
+  require('seneca-stub')(seneca);
+  seneca.stub('role:campaigns', (args, cb) => {
+    cb(null, args)
+  });
+  seneca.stub('role:ads', (args, cb) => {
+    cb(null, args)
+  });
+} else {
+  // System APIs
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.campaigns_PORT,
+    pin: {role: 'campaigns'}
+  });
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.campaigns_PORT,
+    pin: {role: 'ads'}
+  });
+}
+
 
 // =============== marketing/ads ===============
+// =============== ?tags=tag01,tag02 ===============
 seneca.add({role: 'marketing', resource:'ads', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  const params = {};
+  if (args.tags){
+    params.where = {tags: {"$all": args.tags.split(",")}};
+  }
+
+  act({role: 'ads', cmd: 'read'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -24,7 +46,15 @@ seneca.add({role: 'marketing', resource:'ads', cmd: 'GET'}, (args, callback) => 
 
 seneca.add({role: 'marketing', resource:'ads', cmd: 'POST'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  if (!args.body){
+    callback({error: "Missing ad data in body"})
+  }
+
+  const params = {
+    ad: args.body
+  }
+
+  act({role: 'ads', cmd: 'create'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -34,7 +64,15 @@ seneca.add({role: 'marketing', resource:'ads', cmd: 'POST'}, (args, callback) =>
 // =============== marketing/ads/:adId ===============
 seneca.add({role: 'marketing', resource:'ad', cmd: 'DELETE'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  if (!args.adId){
+    callback({error: "Missing ad id in url"})
+  }
+
+  const params = {
+    id: args.adId
+  }
+
+  act({role: 'ads', cmd: 'delete', type:'id'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -45,7 +83,12 @@ seneca.add({role: 'marketing', resource:'ad', cmd: 'DELETE'}, (args, callback) =
 // =============== ?tags=tag01,tag02 ===============
 seneca.add({role: 'marketing', resource:'campaigns', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  const params = {};
+  if (args.tags){
+    params.where = {tags: {"$all": args.tags.split(",")}};
+  }
+
+  act({role: 'campaigns', cmd: 'read'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -53,8 +96,15 @@ seneca.add({role: 'marketing', resource:'campaigns', cmd: 'GET'}, (args, callbac
 });
 
 seneca.add({role: 'marketing', resource:'campaigns', cmd: 'POST'}, (args, callback) => {
+  if (!args.body){
+    callback({error: "Missing campaign data in body"})
+  }
 
-  act({role: 'content', cmd: 'add'}, args)
+  const params = {
+    campaign: args.body
+  }
+
+  act({role: 'campaigns', cmd: 'create'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -64,7 +114,15 @@ seneca.add({role: 'marketing', resource:'campaigns', cmd: 'POST'}, (args, callba
 // =============== marketing/campaigns/:campaignId ===============
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  if (!args.campaignId){
+    callback({error: "Missing campaignId id in url"})
+  }
+
+  const params = {
+    id: args.campaignId
+  }
+
+  act({role: 'campaigns', cmd: 'read', type:'id'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -73,7 +131,20 @@ seneca.add({role: 'marketing', resource:'campaign', cmd: 'GET'}, (args, callback
 
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'PUT'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  if (!args.body){
+    callback({error: "Missing campaign data in body"})
+  }
+
+  if (!args.campaignId){
+    callback({error: "Missing campaignId"})
+  }
+
+  const params = {
+    id: args.campaignId,
+    doc: args.body
+  }
+
+  act({role: 'campaigns', cmd: 'update', type:'id'}, params)
       .then(result => {
         callback(null, result);
       })
@@ -82,7 +153,15 @@ seneca.add({role: 'marketing', resource:'campaign', cmd: 'PUT'}, (args, callback
 
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'DELETE'}, (args, callback) => {
 
-  act({role: 'content', cmd: 'add'}, args)
+  if (!args.campaignId){
+    callback({error: "Missing campaignId"})
+  }
+
+  const params = {
+    id: args.campaignId
+  }
+
+  act({role: 'campaigns', cmd: 'delete', type:'id'}, params)
       .then(result => {
         callback(null, result);
       })

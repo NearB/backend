@@ -23,7 +23,10 @@
     "test": "tape test/*Test.js",
     "coverage": "istanbul cover npm test && open ./coverage/lcov-report/index.html",
     "coverage-check": "istanbul cover npm test && istanbul check-coverage",
-    "commit-check": ["lint", "coverage-check"]
+    "commit-check": [
+      "lint",
+      "coverage-check"
+    ]
   },
   "pre-commit": [
     "commit-check"
@@ -32,6 +35,7 @@
     "istanbul": "^0.4.4",
     "jshint": "^2.9.2",
     "pre-commit": "^1.1.1",
-    "tape": "^4.2.0"
+    "tape": "^4.2.0",
+    "seneca-stub": "^1.2.2"
   }
 }

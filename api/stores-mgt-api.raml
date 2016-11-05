@@ -59,28 +59,11 @@ uses:
             body:
               application/json:
                 type: stores.SuccessStock
-      post:
+      put:
         description: Add a product as part of this Store stock
         body:
           application/json:
             type: stores.ProductStock[]
-
-      /{productId}:
-        put:
-          body:
-            application/json:
-              type: stores.ProductStock
-          responses:
-            200:
-              body:
-                application/json:
-                  type: stores.ProductStock
-        delete:
-          responses:
-            200:
-              body:
-                application/json:
-                  type: stores.SuccessStock
 
     /campaigns:
       get:

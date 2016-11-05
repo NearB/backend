@@ -5,18 +5,30 @@ const seneca = require('seneca')();
 
 const act = Promise.promisify(seneca.act, {context: seneca});
 
-// System APIs
-seneca.client({
-  host: process.env.PROXY_HOST,
-  port: process.env.find_service_PORT,
-  pin: {role: 'find'}
-});
+if (process.env.TESTING){
+  require('seneca-stub')(seneca);
+  seneca.stub('role:find', (args, cb) => {
+    cb(null, args)
+  });
+  seneca.stub('role:stores', (args, cb) => {
+    cb(null, args)
+  });
 
-seneca.client({
-  host: process.env.PROXY_HOST,
-  port: process.env.stores_PORT,
-  pin: {role: 'stores'}
-});
+} else {
+  // System APIs
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.find_service_PORT,
+    pin: {role: 'find'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.stores_PORT,
+    pin: {role: 'stores'}
+  });
+}
+
 
 
 // =============== /locations ===============
@@ -24,26 +36,25 @@ seneca.client({
 // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
 seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback) => {
 
-  act({role: '', cmd: 'status'})
-    .then(res => {
-      return {data: res};
-    })
+  if (!args.beacons){
+    const params = {
+      group: 'NearB'
+    }
+
+    act({role: 'find', cmd: 'list'}, params)
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
+  }
+
+
+  act({role: 'find', cmd: 'list'}, params)
     .then(result => {
       callback(null, result);
     })
     .catch(callback);
 
-  // act({role: 'stores', cmd: 'find'})
-  //   .then(result => {
-  //     // Perform some aggregation / transformation on the results
-  //     var locationResult = {
-  //       timestamp: new Date(),
-  //       stores: result
-  //     };
-  //
-  //     callback(null, locationResult);
-  //   })
-  //   .catch(callback);
 });
 
 seneca.add({role: 'location', resource:'locations', cmd: 'PUT'}, (args, callback) => {
