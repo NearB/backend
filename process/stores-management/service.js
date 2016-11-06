@@ -7,9 +7,7 @@ const act = Promise.promisify(seneca.act, {context: seneca});
 
 if (process.env.TESTING){
   require('seneca-stub')(seneca);
-  seneca.stub('role:stores', (args, cb) => {
-    cb(null, args)
-  });
+  setupStubs(seneca);
 } else {
   // System APIs
   seneca.client({
@@ -33,7 +31,7 @@ seneca.add({role: 'stores-management', resource:'stores', cmd: 'GET'}, (args, ca
 seneca.add({role: 'stores-management', resource:'stores', cmd: 'POST'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing store data in body"})
+    callback("Missing store data in body")
   }
 
   const params = {
@@ -51,7 +49,7 @@ seneca.add({role: 'stores-management', resource:'stores', cmd: 'POST'}, (args, c
 seneca.add({role: 'stores-management', resource:'store', cmd: 'GET'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"})
+    callback("Missing storeId id in url")
   }
 
   const params = {
@@ -68,11 +66,11 @@ seneca.add({role: 'stores-management', resource:'store', cmd: 'GET'}, (args, cal
 seneca.add({role: 'stores-management', resource:'store', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing store data in body"})
+    callback("Missing store data in body")
   }
 
   if (!args.storeId){
-    callback({error: "Missing storeId"})
+    callback("Missing storeId")
   }
 
   const params = {
@@ -90,7 +88,7 @@ seneca.add({role: 'stores-management', resource:'store', cmd: 'PUT'}, (args, cal
 seneca.add({role: 'stores-management', resource:'store', cmd: 'DELETE'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId"})
+    callback("Missing storeId")
   }
 
   const params = {
@@ -108,7 +106,7 @@ seneca.add({role: 'stores-management', resource:'store', cmd: 'DELETE'}, (args, 
 seneca.add({role: 'stores-management', resource:'products', cmd: 'GET'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"})
+    callback("Missing storeId id in url")
   }
 
   //FIXME select: 'stock'   REMOVE .select('-__v')
@@ -127,11 +125,11 @@ seneca.add({role: 'stores-management', resource:'products', cmd: 'GET'}, (args, 
 seneca.add({role: 'stores-management', resource:'products', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"});
+    callback("Missing storeId id in url");
   }
 
   if (!args.body){
-    callback({error: "Missing store data in body"});
+    callback("Missing store data in body");
   }
 
   const params = {
@@ -165,7 +163,7 @@ seneca.add({role: 'stores-management', resource:'products', cmd: 'PUT'}, (args, 
 seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'GET'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"})
+    callback("Missing storeId id in url")
   }
 
   //FIXME select: 'stock'   REMOVE .select('-__v')
@@ -176,7 +174,7 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'GET'}, (args,
   act({role: 'stores', cmd: 'read', type:'id'}, params)
       .then(result => {
         //FIXME select: 'stock'   REMOVE .select('-__v')
-        callback(null, result.campaignTags);
+        callback(null, result.campaignIds);
       })
       .catch(callback);
 });
@@ -184,11 +182,11 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'GET'}, (args,
 seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"});
+    callback("Missing storeId id in url");
   }
 
   if (!args.body){
-    callback({error: "Missing store data in body"});
+    callback("Missing campaigns data in body");
   }
 
   const params = {
@@ -197,11 +195,11 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'PUT'}, (args,
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
       .then(result => {
-        var newCampaignTags = [args.body];
-        if (result.campaignTags){
-          newCampaignTags = result.campaignTags.concat(newCampaignTags)
+        var newCampaignIds = args.body;
+        if (result.campaignIds){
+          newCampaignIds = result.campaignIds.concat(newCampaignIds)
         }
-        const updatedStore = Object.assign({}, result, {campaignTags: newCampaignTags})
+        const updatedStore = Object.assign({}, result, {campaignIds: newCampaignIds})
 
         const updateParams = {
           id: args.storeId,
@@ -221,7 +219,7 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'PUT'}, (args,
 seneca.add({role: 'stores-management', resource:'ads', cmd: 'GET'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"})
+    callback("Missing storeId id in url")
   }
 
   //FIXME select: 'stock'   REMOVE .select('-__v')
@@ -232,7 +230,7 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'GET'}, (args, callb
   act({role: 'stores', cmd: 'read', type:'id'}, params)
       .then(result => {
         //FIXME select: 'stock'   REMOVE .select('-__v')
-        callback(null, result.adTags);
+        callback(null, result.adIds);
       })
       .catch(callback);
 });
@@ -240,11 +238,11 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'GET'}, (args, callb
 seneca.add({role: 'stores-management', resource:'ads', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.storeId){
-    callback({error: "Missing storeId id in url"});
+    callback("Missing storeId id in url");
   }
 
   if (!args.body){
-    callback({error: "Missing store data in body"});
+    callback("Missing store data in body");
   }
 
   const params = {
@@ -253,11 +251,11 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'PUT'}, (args, callb
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
       .then(result => {
-        var newAdTags = [args.body];
-        if (result.adTags){
-          newAdTags = result.adTags.concat(newAdTags)
+        var newAdIds = args.body;
+        if (result.adIds){
+          newAdIds = result.adIds.concat(newAdIds)
         }
-        const updatedStore = Object.assign({}, result, {adTags: newAdTags})
+        const updatedStore = Object.assign({}, result, {adIds: newAdIds})
 
         const updateParams = {
           id: args.storeId,
@@ -273,101 +271,28 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'PUT'}, (args, callb
       .catch(callback);
 });
 
-// // =============== stores/:storeId/clients ===============
-// seneca.add({role: 'stores-management', resource:'clients', cmd: 'GET'}, (args, callback) => {
-//
-//   act({role: 'stores', cmd: 'create'}, params)
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-// seneca.add({role: 'stores-management', cmd: 'create'}, (args, callback) => {
-//
-//   act({role: 'stores', cmd: 'create'}, params)
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-//
-// seneca.add({role: 'stores-management', cmd: 'list'}, (args, callback) => {
-//   act({role: 'stores', cmd: 'find'})
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-//
-// seneca.add({role: 'stores-management', cmd: 'delete'}, (args, callback) => {
-//
-//   const msg = {role: 'stores', cmd: 'remove'};
-//   if (args.params.id) {
-//     msg.type = 'id';
-//     msg.id = args.id;
-//
-//   } else if (args.body) {
-//     msg.type = 'one';
-//     msg.where = args.body;
-//   } else {
-//     callback("ERROR MISSING conditions, use either ID or a condition as payload")
-//   }
-//
-//   if (args.params.ops) {
-//     msg.ops = args.params.ops;
-//   }
-//
-//   act(msg)
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-//
-// seneca.add({role: 'stores-management', cmd: 'update'}, (args, callback) => {
-//   const msg = {role: 'stores', cmd: 'update', type: 'one', ops: {}};
-//
-//   if (args.params.id) {
-//     Object.assign(msg, {type: 'id', id: args.params.id, doc: args.body});
-//
-//   } else {
-//     Object.assign(msg, {where: args.body.where, doc: args.body.put});
-//
-//     if (args.params.multi){
-//       Object.assign(msg, {type: 'bulk', ops:{multi: true}});
-//     }
-//   }
-//
-//   console.log(msg);
-//
-//   if (!(msg.id || msg.where)) {
-//     return callback("ERROR MISSING ID OR CONDITION");
-//   }
-//
-//   if (!msg.new) {
-//     return callback("ERROR MISSING NEW DOC");
-//   }
-//
-//   if (args.params.ops) {
-//     msg.ops = args.params.ops;
-//   }
-//
-//
-//   act(msg)
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-//
-// seneca.add({role: 'stores-management', cmd: 'info'}, (args, callback) => {
-//   act({role: 'stores', cmd: 'find', type: 'id'}, params)
-//       .then(result => {
-//         callback(null, result);
-//       })
-//       .catch(callback);
-// });
-
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
+
+function setupStubs(seneca){
+  seneca.stub('role:stores', (args, cb) => {
+    cb(null, args)
+  });
+
+  seneca.stub('role:stores,cmd:read,type:id', (args, cb) => {
+    cb(null, {
+      _id: args.id,
+      name: 'La Birreria',
+      ownerId: '58167342593b55ac37e45490',
+      stock: [
+        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
+        {productId: '816735ac37e44549025953b5', price: 75, stock: 90}
+      ],
+      locations: ['laBirreria:main'],
+      adIds: ['8735ac37e44549025953b516', 'c37e4454902595735a3b5'],
+      campaignIds: ['c33b557e445490295735a', 'c37e445490295735a3b55']
+    })
+  });
+}
+
 
 module.exports.seneca = seneca;

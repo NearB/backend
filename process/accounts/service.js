@@ -40,7 +40,7 @@ seneca.add({role: 'accounts', resource:'users', cmd: 'GET'}, (args, callback) =>
 seneca.add({role: 'accounts', resource:'users', cmd: 'POST'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing user data in body"})
+    callback("Missing user data in body")
   }
 
   const params = {
@@ -58,7 +58,7 @@ seneca.add({role: 'accounts', resource:'users', cmd: 'POST'}, (args, callback) =
 seneca.add({role: 'accounts', resource:'user', cmd: 'GET'}, (args, callback) => {
 
   if (!args.userId){
-    callback({error: "Missing userId id in url"})
+    callback("Missing userId id in url")
   }
 
   const params = {
@@ -75,11 +75,11 @@ seneca.add({role: 'accounts', resource:'user', cmd: 'GET'}, (args, callback) => 
 seneca.add({role: 'accounts', resource:'user', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing user data in body"})
+    callback("Missing user data in body")
   }
 
   if (!args.userId){
-    callback({error: "Missing userId"})
+    callback("Missing userId")
   }
 
   const params = {
@@ -97,7 +97,7 @@ seneca.add({role: 'accounts', resource:'user', cmd: 'PUT'}, (args, callback) => 
 seneca.add({role: 'accounts', resource:'user', cmd: 'DELETE'}, (args, callback) => {
 
   if (!args.userId){
-    callback({error: "Missing userId"})
+    callback("Missing userId")
   }
 
   const params = {

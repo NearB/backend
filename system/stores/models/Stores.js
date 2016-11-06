@@ -14,8 +14,9 @@ const StoreModel = {
   ownerId:{ type: String, required:[true, 'Missing required field [ownerId]']},
   locations:{ type: [String], required:[true, 'Missing required field [locations]']},
   stock: [productStockSchema],
-  adTags: [String],
-  campaignTags: [String]
+  adIds: [String],
+  campaignIds: [String],
+  address: String
 };
 
 const storeSchema = mongoose.Schema(StoreModel);

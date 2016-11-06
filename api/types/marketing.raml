@@ -49,6 +49,9 @@ types:
     properties:
       id: string
       name: string
+      engagementLink:
+        type: string
+        description: engagement link to allow the user to enter the store in a unique way
       img:
         type: file
         fileTypes: ['image/jpeg', 'image/png']
@@ -58,7 +61,7 @@ types:
       expiration?:
         type: datetime-only
         example: 2016-12-24T22:00:00
-      _links:
+      _links?:
         type: object
         properties:
           access: string

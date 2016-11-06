@@ -25,7 +25,7 @@ if (process.env.TESTING){
 seneca.add({role: 'warehouse', resource:'products', cmd: 'POST'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing product data in body"})
+    callback("Missing product data in body")
   }
 
   const params = {
@@ -59,7 +59,7 @@ seneca.add({role: 'warehouse', resource:'products', cmd: 'GET'}, (args, callback
 seneca.add({role: 'warehouse', resource:'product', cmd: 'GET'}, (args, callback) => {
 
   if (!args.productId){
-    callback({error: "Missing product data in body"})
+    callback("Missing product data in body")
   }
 
   const params = {
@@ -76,11 +76,11 @@ seneca.add({role: 'warehouse', resource:'product', cmd: 'GET'}, (args, callback)
 seneca.add({role: 'warehouse', resource:'product', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing product data in body"})
+    callback("Missing product data in body")
   }
 
   if (!args.productId){
-    callback({error: "Missing product data in body"})
+    callback("Missing product data in body")
   }
 
   const params = {
@@ -97,7 +97,7 @@ seneca.add({role: 'warehouse', resource:'product', cmd: 'PUT'}, (args, callback)
 seneca.add({role: 'warehouse', resource:'product', cmd: 'DELETE'}, (args, callback) => {
 
   if (!args.productId){
-    callback({error: "Missing product data in body"})
+    callback("Missing product data in body")
   }
 
   const params = {

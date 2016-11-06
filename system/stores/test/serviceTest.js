@@ -25,9 +25,9 @@ const store = {
   name: 'Barbas',
   ownerId: '581673454902593b55ac37e4',
   stock: [firstProductStock, secondProductStock],
-  locations: ['73454902593b55ac37e45816', '7345164902593b55ac37e458'],
-  adTags: [],
-  campaignTags: []
+  locations: ['barbas:main', 'barbas:reception'],
+  adIds: [],
+  campaignIds: []
 };
 
 //=========== TESTS ARE SECUENTIAL, KEEP THAT IN MIND ===========
@@ -78,11 +78,11 @@ test('test stores update by id', (t) => {
   const partial = {
     // no partial array update for now, sorry folks
     stock: [firstProductStock, secondProductStock],
-    adTags: ['happyHour', 'firstSixDiscount']
+    adIds: ['581673454902b55ac37e4593', '902b55581673454ac37e4593']
   };
 
   store.stock = [firstProductStock, secondProductStock];
-  store.adTags = ['happyHour', 'firstSixDiscount'];
+  store.adIds = ['581673454902b55ac37e4593', '902b55581673454ac37e4593'];
 
   //Update in the DB
   seneca.act({role: 'stores', cmd: 'update', type:'id'},

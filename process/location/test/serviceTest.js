@@ -9,127 +9,124 @@ process.env.SERVICE_PORT = 3011;
 var test = require('tape');
 var seneca = require('../service').seneca;
 
-const firstProduct = {
-  _id: '5dadbca53cbfa3d781b13aa4',
-  name: 'Belgian Pale Ale',
-  tags: ['beer', 'blonde'],
-  img: 'http://blog.twobeerdudes.com/wp-content/uploads/2012/08/brett_backspin_belgian_pale_ale.jpg',
-  description: 'abv: 4.0-7.0%, delicate hop finish, sweetish to toasty malt overtones'
+const firstFP = {
+  mac: 'ee:94:f6:c4:14:b1',
+  rssi: -44
 };
 
-const secondProduct = {
-  _id: '581b13aa4dadbca53cbfa3d7',
-  name: 'Coffee Stout',
-  tags: ['beer', 'stout'],
-  img: 'https://s3.amazonaws.com/brewerydbapi/beer/onGh9g/upload_VuPXQJ-medium.png',
-  description: 'ABV: 5.7%, IBU: 30, Pale, Caramel, Roasted Barley, Oats'
+const secondFP = {
+  mac: '74:94:f6:c4:14:b6',
+  rssi: -80
+};
+
+const encondedBeacons = encodeURI(`${firstFP.mac}=${firstFP.rssi},${secondFP.mac}=${secondFP.rssi}`);
+
+const trackingInformation = {
+  group: 'NearB',
+  username: 'testUser',
+  location: 'Starbucks01',
+  time: '1478379117',
+  'wifi-fingerprint': [firstFP, secondFP]
 };
 
 
-test('test POST product', (t) => {
-  t.plan(4);
+test('test GET locate', (t) => {
+  t.plan(6);
 
-  seneca.act({role: 'warehouse', resource:'products', cmd: 'POST'},
+  seneca.act({role: 'location', resource:'locate', cmd: 'GET'},
   {
-    body: firstProduct
+    beacons: encondedBeacons,
+    username: trackingInformation.username
   },
   (err, result) => {
     t.equal(err, null, "no errors");
-    t.looseEquals(result.product, firstProduct, "mapped product");
-  });
-
-  seneca.act({role: 'warehouse', resource:'products', cmd: 'POST'},
-  {
-    body: secondProduct
-  },
-  (err, result) => {
-    t.equal(err, null, "no errors");
-    t.looseEquals(result.product, secondProduct, "mapped product");
+    t.ok(result.success, "success response");
+    t.ok(result.message.includes(trackingInformation.username), "correct username");
+    t.equal(Object.keys(result.bayes).length, 2, "correct bayes length");
+    t.ok(result.bayes[`${trackingInformation.username}:${firstFP.mac}`], 'contains location one');
+    t.ok(result.bayes[`${trackingInformation.username}:${secondFP.mac}`], 'contains location two');
   });
 });
 
 
-test('test GET products - No filters', (t) => {
+test('test GET discover with beacons', (t) => {
   t.plan(3);
 
-  seneca.act({role: 'warehouse', resource:'products', cmd: 'GET'},
-  {},
+  const expectedFilter = {
+    $in: [`${trackingInformation.username}:${firstFP.mac}`,
+            `${trackingInformation.username}:${secondFP.mac}`]
+  }
+
+  seneca.act({role: 'location', resource:'discover', cmd: 'GET'},
+  {
+    beacons: encondedBeacons,
+    username: trackingInformation.username
+  },
   (err, result) => {
-    t.equal(err, null, "no errors");
-    t.false(result.where, "no filters provided");
-    t.false(result.select, "no projection provided");
+    t.equal(err, null, 'no errors');
+    t.ok(result.where, 'created filter');
+    t.looseEquals(result.where.locations, expectedFilter, 'filter matched');
   });
 });
 
 
-test('test GET products - Filtered by tags', (t) => {
+test('test GET discover with locations', (t) => {
   t.plan(3);
 
-  seneca.act({role: 'warehouse', resource:'products', cmd: 'GET'},
+  const locations = `${trackingInformation.username}:${firstFP.mac},${trackingInformation.username}:${secondFP.mac}`
+  const expectedFilter = {
+    $in: [`${trackingInformation.username}:${firstFP.mac}`,
+            `${trackingInformation.username}:${secondFP.mac}`]
+  }
+
+  seneca.act({role: 'location', resource:'discover', cmd: 'GET'},
   {
-    tags: 'beer,blonde'
+    locations: locations,
   },
   (err, result) => {
-    t.equal(err, null, "no errors");
-    t.looseEquals(
-      result.where, {
-        tags: {"$all": ['beer', 'blonde']}
-      } ,"provided tag filters");
-    t.false(result.select, "no projection provided");
+    t.equal(err, null, 'no errors');
+    t.ok(result.where, 'created filter');
+    t.looseEquals(result.where.locations, expectedFilter, 'filter matched');
   });
 });
 
 
-test('test GET product by id', (t) => {
-  t.plan(4);
+test('test GET locations list', (t) => {
+  t.plan(2);
 
-  seneca.act({role: 'warehouse', resource:'product', cmd: 'GET'},
-  {
-    productId: firstProduct._id
-  },
+  seneca.act({role: 'location', resource:'locations', cmd: 'GET'}, {},
   (err, result) => {
-    t.equal(err, null, "no errors");
-    t.equal(result.id, firstProduct._id, "mapped id");
-    t.false(result.select, "no select");
-    t.false(result.ops, "no options");
+    t.equal(err, null, 'no errors');
+    t.equal(result.group, 'NearB');
   });
 });
 
 
-test('test PUT product', (t) => {
-  t.plan(4);
+test('test PUT locations', (t) => {
+  t.plan(2);
 
-  //Update firstProduct info
-  firstProduct.tags = firstProduct.tags.concat(['light']);
-  const partial = {
-    tags: firstProduct.tags
-  };
 
-  seneca.act({role: 'warehouse', resource:'product', cmd: 'PUT'},
+  seneca.act({role: 'location', resource:'locations', cmd: 'PUT'},
   {
-    productId: firstProduct._id,
-    body: partial
+    body: trackingInformation
   },
   (err, result) => {
-    t.equal(err, null, "no errors");
-    t.equal(result.id, firstProduct._id, "mapped id");
-    t.looseEquals(result.doc, partial, "partial as doc");
-    t.false(result.ops, "no options");
+    t.equal(err, null, 'no errors');
+    t.looseEquals(result.trackingInfo, trackingInformation);
   });
 });
 
 
-test('test DELETE product', (t) => {
-  t.plan(3);
+test('test DELETE location', (t) => {
+  t.plan(2);
 
-  seneca.act({role: 'warehouse', resource:'product', cmd: 'DELETE'},
+  seneca.act({role: 'location', resource:'location', cmd: 'DELETE'},
   {
-    productId: firstProduct._id
+    locationId: `${trackingInformation.username}:${firstFP.mac}`
   },
   (err, result) => {
-    t.equal(err, null, "no errors");
-    t.equal(result.id, firstProduct._id, "mapped id");
-    t.false(result.ops, "no options");
+    t.equal(err, null, 'no errors');
+    t.equal(result.location, `${trackingInformation.username}:${firstFP.mac}`);
   });
 });
 

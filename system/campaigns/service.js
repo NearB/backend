@@ -111,9 +111,9 @@ seneca.add({role: 'ads', cmd: 'read'}, (args, cb) => {
   execute(Marketing.Ad.find(args.where, args.select), cb);
 });
 
-// seneca.add({role: 'ads', cmd: 'read', type: 'id'}, (args, cb) => {
-//   execute(Marketing.Ad.findById(args.id, args.select, args.ops), cb);
-// });
+seneca.add({role: 'ads', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Marketing.Ad.findById(args.id, args.select, args.ops), cb);
+});
 
 // seneca.add({role: 'ads', cmd: 'read', type: 'one'}, (args, cb) => {
 //   execute(Marketing.Ad.findOne(args.where, args.select, args.ops), cb);

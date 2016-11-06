@@ -56,6 +56,7 @@ seneca.client({
 module.exports = (app) => {
 
   //TODO review if necessary to declare 'use' AND cors by route to enable preflight
+  app.options('/api/locate', cors(corsOptions));
   app.options('/api/locations', cors(corsOptions));
   app.options('/api/locations/:locationId', cors(corsOptions));
   app.options('/api/carts', cors(corsOptions));
@@ -154,20 +155,22 @@ module.exports = (app) => {
 
 // =============== location ===============
 
-  // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
-  app.get('/api/locations', cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
-  });
-
   app.put('/api/locations', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
+  app.get('/api/locations', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'locations', cmd: req.method}, plain(req)), res);
+  });
+
+  app.delete('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
   });
 
-  app.put('/api/locations/:locationId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
+// =============== locate ===============
+  // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+  // =============== ?username=someusername ===============
+  app.get('/api/locate', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'location', resource:'locate', cmd: req.method}, plain(req)), res);
   });
 };

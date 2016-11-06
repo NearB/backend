@@ -10,6 +10,7 @@ uses:
   marketing: types/marketing.raml
   products: types/product.raml
 
+
 traits:
   engaged:
     queryParameters:
@@ -18,8 +19,21 @@ traits:
         description: |
           The token that was used to grant access to this Store.
           This toke will be auto generated when fetching the Ad, and embedded in the store link.
-        example: ?engagement=J1qK1c18UUGJFAzz9xnH56584l4
+        example: ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e
 
+/engagements:
+  post:
+    queryParameters:
+      userId: string
+      storeId: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: !include types/successType.raml
+            properties:
+              cartId: string
+              token: string
 
 /promotions:
   get:
@@ -35,7 +49,7 @@ traits:
         description: |
           Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
           the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16%2C32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
@@ -74,14 +88,3 @@ traits:
     delete:
       description: Close the cart and delete without checkout
       is: [engaged]
-
-    /products/{productId}:
-      put:
-        description: Updates the amount of items of this product kind
-        is: [engaged]
-        queryParameters:
-          quantity: integer
-
-      delete:
-        description: All the items of this product from the cart
-        is: [engaged]

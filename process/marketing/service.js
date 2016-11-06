@@ -44,10 +44,27 @@ seneca.add({role: 'marketing', resource:'ads', cmd: 'GET'}, (args, callback) => 
       .catch(callback);
 });
 
+// =============== marketing/ads/:adId ===============
+seneca.add({role: 'marketing', resource:'ad', cmd: 'GET'}, (args, callback) => {
+
+  if (!args.adId){
+    callback("Missing adId");
+  }
+
+  const params = {
+    id: args.adId
+  }
+  act({role: 'ads', cmd: 'read', type:'id'}, params)
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
+});
+
 seneca.add({role: 'marketing', resource:'ads', cmd: 'POST'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing ad data in body"})
+    callback("Missing ad data in body");
   }
 
   const params = {
@@ -65,7 +82,7 @@ seneca.add({role: 'marketing', resource:'ads', cmd: 'POST'}, (args, callback) =>
 seneca.add({role: 'marketing', resource:'ad', cmd: 'DELETE'}, (args, callback) => {
 
   if (!args.adId){
-    callback({error: "Missing ad id in url"})
+    callback("Missing ad id in url")
   }
 
   const params = {
@@ -97,7 +114,7 @@ seneca.add({role: 'marketing', resource:'campaigns', cmd: 'GET'}, (args, callbac
 
 seneca.add({role: 'marketing', resource:'campaigns', cmd: 'POST'}, (args, callback) => {
   if (!args.body){
-    callback({error: "Missing campaign data in body"})
+    callback("Missing campaign data in body")
   }
 
   const params = {
@@ -115,7 +132,7 @@ seneca.add({role: 'marketing', resource:'campaigns', cmd: 'POST'}, (args, callba
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'GET'}, (args, callback) => {
 
   if (!args.campaignId){
-    callback({error: "Missing campaignId id in url"})
+    callback("Missing campaignId id in url")
   }
 
   const params = {
@@ -132,11 +149,11 @@ seneca.add({role: 'marketing', resource:'campaign', cmd: 'GET'}, (args, callback
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'PUT'}, (args, callback) => {
 
   if (!args.body){
-    callback({error: "Missing campaign data in body"})
+    callback("Missing campaign data in body")
   }
 
   if (!args.campaignId){
-    callback({error: "Missing campaignId"})
+    callback("Missing campaignId")
   }
 
   const params = {
@@ -154,7 +171,7 @@ seneca.add({role: 'marketing', resource:'campaign', cmd: 'PUT'}, (args, callback
 seneca.add({role: 'marketing', resource:'campaign', cmd: 'DELETE'}, (args, callback) => {
 
   if (!args.campaignId){
-    callback({error: "Missing campaignId"})
+    callback("Missing campaignId")
   }
 
   const params = {

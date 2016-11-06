@@ -35,7 +35,7 @@ traits:
         description: |
           Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
           the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16%2C32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
@@ -138,7 +138,7 @@ traits:
         description: |
           Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
           the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16%2C32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
@@ -187,20 +187,27 @@ traits:
       delete:
         description: All the items of this product from the cart
 
-/locations:
+/locate:
   get:
     queryParameters:
+      username:
+        type: string
+        required: false
+        description: the iusernamed of the user that requests to be located
       beacons:
         type: string
+        required: true
         description: |
-          Set of fingerprints expressed as [mac=level] tuples. In the example we have two fingerprints,
-          the first one is [24:a4:3c:9e:d2:84=16] and the second [32:a4:3c:9e:d2:84=10]
-        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16&32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
+          Set of fingerprints expressed as mac=level tuples. In the example we have two fingerprints,
+          the first one is 24:a4:3c:9e:d2:84=16 and the second 32:a4:3c:9e:d2:84=10
+        example: ?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16%2C32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10
     responses:
       200:
         body:
           application/json:
             type: locations.SuccessLocations
+
+/locations:
   put:
     body:
       application/json:
@@ -211,21 +218,20 @@ traits:
           application/json:
             type: locations.SuccessLocation
 
-  /{locationId}:
+  /{group}:
     get:
       responses:
         200:
           body:
             application/json:
-              type: locations.SuccessLocation
+              type: locations.SuccessLocations
 
-    put:
-      description: Update Location based on tracking information
-      body:
-        application/json:
-          type: locations.TrackingInformation
-      responses:
-        200:
-          body:
-            application/json:
-              type: locations.SuccessLocation
+    /{locationId}:
+      delete:
+        description: Removes the location identified by <<locationId>>
+        responses:
+          200:
+            description: Returns the remaining locations
+            body:
+              application/json:
+                type: !include types/successType.raml

@@ -96,57 +96,42 @@ mongoose.connection.once('open', function () {
     {
       name: 'Barbas',
       ownerId: '581673454902593b55ac37e4',
-      stock: [
-        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
-        {productId: '816735ac37e44549025953b5', price: 75, stock: 10}
-      ],
-      locations: ['73454902593b55ac358167e4', '7324516490593b55ac37e458'],
-      adTags: ['happyHour'],
-      campaignTags: ['firstSixDiscount']
+      stock: [],
+      locations: ['barbas:main', 'barbas:reception'],
+      adIds: [],
+      campaignIds: []
     },
     {
       name: 'OnTap',
       ownerId: '54902593b55ac37e45816734',
-      stock: [
-        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
-        {productId: '816735ac37e44549025953b5', price: 75, stock: 109}
-      ],
-      locations: ['735845164902593b55ac37e4'],
-      adTags: ['happyHour'],
-      campaignTags: []
+      stock: [],
+      locations: ['onTap:main'],
+      adIds: [],
+      campaignIds: []
     },
     {
       name: 'Cervelar',
       ownerId: '581673493b55ac37e4549025',
-      stock: [
-        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
-        {productId: '816735ac37e44549025953b5', price: 75, stock: 1}
-      ],
-      locations: ['73454902593b55ac37e45816', '6490259734513b55ac37e458'],
-      adTags: [],
-      campaignTags: []
+      stock: [],
+      locations: ['cervelar:main', 'cervelar:lobby'],
+      adIds: [],
+      campaignIds: []
     },
     {
       name: 'DBox',
       ownerId: '816734549502593b55ac37e4',
-      stock: [
-        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
-        {productId: '816735ac37e44549025953b5', price: 75, stock: 0}
-      ],
-      locations: ['73454902593b55ac37e45816', '7345164902593b55ac37e458', '745164902593b55ac37e4358'],
-      adTags: ['happyHour', 'allHalfPrice'],
-      campaignTags: []
+      stock: [],
+      locations: ['dBox:reception', 'dBox:tables', 'dBox:kitchen'],
+      adIds: [],
+      campaignIds: []
     },
     {
       name: 'La Birreria',
       ownerId: '58167342593b55ac37e45490',
-      stock: [
-        {productId: '5ac37e4454902595816733b5', price: 75, stock: 100},
-        {productId: '816735ac37e44549025953b5', price: 75, stock: 90}
-      ],
-      locations: ['737e45816454902593b55ac3'],
-      adTags: ['birthDay', 'beerWithBurguer'],
-      campaignTags: ['openingMonth', 'largeGroups']
+      stock: [],
+      locations: ['laBirreria:main'],
+      adIds: [],
+      campaignIds: []
     }
   ];
 

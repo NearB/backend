@@ -22,6 +22,7 @@ const Product = mongoose.model('Product', productSchema);
 
 const CartModel = {
   total:{ type: Number, required:[true, 'Missing required field [total]']},
+  engagement: { type: String, required:[true, 'Missing required field [engagement]']},
   products: [cartProductSchema],
   discount: Number
 };
