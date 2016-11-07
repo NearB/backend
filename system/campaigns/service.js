@@ -165,39 +165,33 @@ mongoose.connection.once('open', function () {
 
   var adsData = [
     {
-      id: 'ad01',
       name: '01 Ad',
       tags: ['tag01'],
       img: "/some/path"
     },
     {
-      id: 'ad02',
       name: '02 Ad',
-      tags: [],
+      tags: ['tag01'],
       img: "/some/path"
     },
     {
-      id: 'ad03',
       name: '03 Ad',
       tags: ['tag01', 'tag02'],
       img: "/some/path"
     },
     {
-      id: 'ad04',
       name: '04 Ad',
       tags: ['tag01', 'tag02'],
       img: "/some/path"
     },
     {
-      id: 'ad05',
       name: '05 Ad',
       tags: ['tag03'],
       img: "/some/path"
     },
     {
-      id: 'ad06',
       name: '06 Ad',
-      tags: [],
+      tags: ['tag01'],
       img: "/some/path",
       expiration: "20161212"
     }
@@ -205,42 +199,45 @@ mongoose.connection.once('open', function () {
 
   var campaignData = [
     {
-      id: 'campaign01',
       name: '01 campaign',
       tags: ['tag01'],
       ads: ['ad01', 'ad02', 'ad03']
     },
     {
-      id: 'campaign02',
       name: '02 campaign',
-      tags: [],
+      tags: ['tag02', 'tag04'],
       ads: ['ad01', 'ad02', 'ad03']
     },
     {
-      id: 'campaign03',
       name: '03 campaign',
       tags: ['tag01', 'tag02'],
       ads: ['ad01', 'ad02', 'ad03']
     },
     {
-      id: 'campaign04',
       name: '04 campaign',
       tags: ['tag01', 'tag02'],
       ads: ['ad03']
     },
     {
-      id: 'campaign05',
       name: '05 campaign',
       tags: ['tag03'],
       ads: ['ad05', 'ad04', 'ad06']
     },
     {
-      id: 'campaign06',
       name: '06 campaign',
-      tags: [],
+      tags: ['tag06'],
       ads: ['ad06', 'ad05']
     }
   ];
+
+  // DROP COLLECTIONS
+  // Marketing.Campaign.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
+  // Marketing.Ad.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
+
 
   Marketing.Campaign.count()
       .then(function (count) {

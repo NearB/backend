@@ -15,7 +15,7 @@ const act = Promise.promisify(seneca.act, {context: seneca});
 const reply = (promise, connection) => {
   promise
       .then(result => {
-        connection.json({result: result});
+        connection.json({data: result});
       })
       .catch(err => {
         connection.json({err: err});
@@ -23,7 +23,7 @@ const reply = (promise, connection) => {
 };
 
 const plain = (req) => {
-  return {params: Object.assign({}, req.params, req.query), body: req.body};
+  return Object.assign({}, req.params, req.query, {body: req.body});
 };
 
 
@@ -49,13 +49,13 @@ seneca.client({
 seneca.client({
   host: process.env.PROXY_HOST,
   port: process.env.warehouse_PORT,
-  pin: {role: 'warehouse'}
+  pin: 'role:warehouse'
 });
 
 seneca.client({
   host: process.env.PROXY_HOST,
   port: process.env.stores_management_PORT,
-  pin: {role: 'stores-management'}
+  pin: 'role:stores-management'
 });
 
 module.exports = (app) => {
@@ -182,6 +182,13 @@ module.exports = (app) => {
   });
 
 // =============== accounts ===============
+
+  // =============== TEMPORARY ENDPOINT UNTIL FB LOGIN ===============
+  // =============== ?username=username ===============
+  app.get('/api/users/:username', cors(corsOptions), (req, res) => {
+    reply(act({role: 'accounts', resource:'users', cmd: req.method, type:'username'}, plain(req)), res);
+  });
+
 
   // =============== ?preferences=tag02,tag02 ===============
   app.get('/api/users', cors(corsOptions), (req, res) => {

@@ -13,7 +13,7 @@ const corsOptions = {
 const reply = (promise, connection) => {
   promise
       .then(result => {
-        connection.json({result: result});
+        connection.json({data: result});
       })
       .catch(err => {
         connection.json({err: err});
@@ -21,7 +21,7 @@ const reply = (promise, connection) => {
 };
 
 const plain = (req) => {
-  return {params: Object.assign({}, req.params, req.query), body: req.body};
+  return Object.assign({}, req.params, req.query, {body: req.body});
 };
 
 

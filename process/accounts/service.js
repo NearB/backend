@@ -21,6 +21,40 @@ if (process.env.TESTING){
 }
 
 // =============== /users ===============
+seneca.add({role: 'accounts', resource:'users', cmd: 'GET', type: 'username'}, (args, callback) => {
+
+  if (!args.username){
+    callback("Missing username");
+  }
+
+  const params = {
+    where: {username: args.username}
+  };
+
+  act({role: 'users', cmd: 'read', type: 'one'}, params)
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
+});
+
+
+seneca.add({role: 'accounts', resource:'users', cmd: 'GET', type: 'fbLogin'}, (args, callback) => {
+
+  if (!args.fbId){
+    callback("Missing fb Id");
+  }
+
+  const params = {
+    where: {fbId: args.fbId}
+  };
+
+  act({role: 'users', cmd: 'read', type: 'one'}, params)
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
+});
 
 // =============== ?preferences=tag02,tag02 ===============
 seneca.add({role: 'accounts', resource:'users', cmd: 'GET'}, (args, callback) => {

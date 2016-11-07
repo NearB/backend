@@ -10,7 +10,7 @@ const AdModel = {
 const CampaignModel = {
   name:{ type: String, required:[true, 'Missing required field [name]']},
   tags:{ type: [String], required:[true, 'Missing required field [tags]']},
-  ads:[{ type: [String], required:[true, 'Missing required field [ads]']}],
+  ads: { type: [String], required:[true, 'Missing required field [ads]']},
   expiration: String
 };
 

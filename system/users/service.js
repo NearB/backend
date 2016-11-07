@@ -48,10 +48,9 @@ seneca.add({role: 'users', cmd: 'read', type: 'id'}, (args, cb) => {
   execute(Users.User.findById(args.id, args.select, args.ops), cb);
 });
 
-//REVIEW if necessary
-// seneca.add({role: 'users', cmd: 'read', type: 'one'}, (args, cb) => {
-//   execute(Users.User.findOne(args.where, args.select, args.ops), cb);
-// });
+seneca.add({role: 'users', cmd: 'read', type: 'one'}, (args, cb) => {
+  execute(Users.User.findOne(args.where, args.select, args.ops), cb);
+});
 
 
 // =============== delete ===============
@@ -93,10 +92,12 @@ seneca.add({role: 'users', cmd: 'update', type: 'id'}, (args, cb) => {
 //       .catch(cb);
 // });
 
-seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
-
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
+
+  // Users.User.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
 
   var data = [
     {
@@ -167,5 +168,6 @@ mongoose.connection.once('open', function () {
 
 });
 
+seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
 module.exports.seneca = seneca;

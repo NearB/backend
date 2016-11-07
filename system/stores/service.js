@@ -6,6 +6,10 @@ mongoose.Promise = require('bluebird');
 
 const Stores = require('./models').Stores;
 
+
+console.log("PROCESS CUSTOM ENV");
+console.log(process.env.CUSTOM);
+
 const successCb = (cb) => {
   return res => {
     return cb.call(this, null, res);
@@ -92,6 +96,11 @@ seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
 // Bootstrap some random stores
 mongoose.connection.once('open', function () {
+
+  // Stores.Store.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
+  
   var stores = [
     {
       name: 'Barbas',

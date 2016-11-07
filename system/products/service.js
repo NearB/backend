@@ -5,11 +5,6 @@ const mongoose = require('./mongoose');
 mongoose.Promise = require('bluebird');
 
 const Products = require('./models').Products;
-/*
-  Product:Product,
-  CartProduct:CartProduct,
-  Cart:Cart
-*/
 
 const successCb = (cb) => {
   return res => {
@@ -45,6 +40,7 @@ seneca.add({role: 'products', cmd: 'create'}, (args, cb) => {
 // =============== read ===============
 
 seneca.add({role: 'products', cmd: 'read'}, (args, cb) => {
+  console.log('PRODUCTS READ');
   execute(Products.Product.find(args.where, args.select), cb);
 });
 
@@ -232,6 +228,14 @@ seneca.add({role: 'cart', cmd: 'update', type: 'id'}, (args, cb) => {
 
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
+  // Products.Product.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
+  // Products.Cart.remove({}, function(err) {
+  //    console.log('collection removed')
+  // });
+
+
   var products = [
     {
       name: 'Belgian Pale Ale',
@@ -290,5 +294,6 @@ mongoose.connection.once('open', function () {
       });
 });
 
+seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
 module.exports.seneca = seneca;

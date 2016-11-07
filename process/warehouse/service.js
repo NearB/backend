@@ -47,6 +47,7 @@ seneca.add({role: 'warehouse', resource:'products', cmd: 'GET'}, (args, callback
   if (args.tags){
     params.where = {tags: {"$all": args.tags.split(",")}};
   }
+
   act({role: 'products', cmd: 'read'}, params)
       .then(result => {
         callback(null, result);
