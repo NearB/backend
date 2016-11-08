@@ -1,30 +1,32 @@
 #!/bin/bash
-cd /Users/alejandro/facu/tp/backend/system/campaings
+FULL_PATH=$(git rev-parse --show-toplevel)
+
+cd "$FULL_PATH/system/campaigns"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/system/find
+cd "$FULL_PATH/system/find"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/system/products
+cd "$FULL_PATH/system/products"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/system/stores
+cd "$FULL_PATH/system/stores"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/system/users
+cd "$FULL_PATH/system/users"
 npm install --save
 
-cd /Users/alejandro/facu/tp/backend/process/accounts
+cd "$FULL_PATH/process/accounts"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/process/engagement
+cd "$FULL_PATH/process/engagement"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/process/location
+cd "$FULL_PATH/process/location"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/process/marketing
+cd "$FULL_PATH/process/marketing"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/process/warehouse
+cd "$FULL_PATH/process/warehouse"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/process/stores-management
+cd "$FULL_PATH/process/stores-management"
 npm install --save
 
-cd /Users/alejandro/facu/tp/backend/experience/mobile-api
+cd "$FULL_PATH/experience/mobile-api"
 npm install --save
-cd /Users/alejandro/facu/tp/backend/experience/web-api
+cd "$FULL_PATH/experience/web-api"
 npm install --save
 
