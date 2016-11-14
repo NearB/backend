@@ -34,7 +34,7 @@ fuge> start
 
 ### Checking if everything worked
 
-Go [here](http://localhost:10000/api/location/list).
+Go [here](http://localhost:10000/api/stores).
 
 If everything was fine, the proxy at port 10000 is redirecting the
 request to the Mobile API, which is interacting with the Location API,
