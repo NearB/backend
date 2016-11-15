@@ -36,7 +36,7 @@ seneca.add({role: 'stores-management', resource:'stores', cmd: 'POST'}, (args, c
 
   const params = {
     store: args.body
-  }
+  };
 
   act({role: 'stores', cmd: 'create'}, params)
       .then(result => {

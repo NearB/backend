@@ -22,7 +22,17 @@ const StoreModel = {
 const storeSchema = mongoose.Schema(StoreModel);
 const Store = mongoose.model('Store', storeSchema);
 
+storeSchema.pre('validate', function (next) {
+  const locations = this.get('locations');
+
+  if (!locations || !locations.length) {
+    const name = this.get('name');
+    this.locations = [`${name.toLowerCase()}:main`];
+  }
+  next();
+});
+
 module.exports = {
-  Store:Store,
-  ProductStock:ProductStock
+  Store: Store,
+  ProductStock: ProductStock
 };

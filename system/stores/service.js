@@ -100,7 +100,7 @@ mongoose.connection.once('open', function () {
   // Stores.Store.remove({}, function(err) {
   //    console.log('collection removed')
   // });
-  
+
   var stores = [
     {
       name: 'Barbas',
