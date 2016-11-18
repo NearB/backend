@@ -10,7 +10,7 @@ const AdModel = {
 const CampaignModel = {
   name:{ type: String, required:[true, 'Missing required field [name]']},
   tags:{ type: [String], required:[true, 'Missing required field [tags]']},
-  ads: { type: [String], required:[true, 'Missing required field [ads]']},
+  ads: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ad' }], required:[true, 'Missing required field [ads]']},
   expiration: String
 };
 
@@ -22,6 +22,6 @@ const Ad = mongoose.model('Ad', adSchema);
 const Campaign = mongoose.model('Campaign', campaignSchema);
 
 module.exports = {
-  Ad:Ad,
-  Campaign:Campaign
+  Ad: Ad,
+  Campaign: Campaign
 };

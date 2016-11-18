@@ -1,6 +1,7 @@
 'use strict';
 
 const seneca = require('seneca')();
+const _ = require('lodash');
 const mongoose = require('./mongoose');
 mongoose.Promise = require('bluebird');
 
@@ -40,7 +41,7 @@ seneca.add({role: 'campaigns', cmd: 'create'}, (args, cb) => {
 // =============== read ===============
 
 seneca.add({role: 'campaigns', cmd: 'read'}, (args, cb) => {
-  execute(Marketing.Campaign.find(args.where, args.select), cb);
+  execute(Marketing.Campaign.find(args.where, args.select).populate('ads', 'name _id'), cb);
 });
 
 seneca.add({role: 'campaigns', cmd: 'read', type: 'id'}, (args, cb) => {
@@ -66,7 +67,7 @@ seneca.add({role: 'campaigns', cmd: 'delete', type: 'id'}, (args, cb) => {
 // =============== update ===============
 
 seneca.add({role: 'campaigns', cmd: 'update', type: 'id'}, (args, cb) => {
-  const options = Object.assign({}, {new: true}, args.ops)
+  const options = Object.assign({}, {new: true}, args.ops);
   execute(Marketing.Campaign.findByIdAndUpdate(args.id, args.doc, options), cb);
 });
 
@@ -160,8 +161,9 @@ seneca.add({role: 'ads', cmd: 'update', type: 'id'}, (args, cb) => {
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
 
-// Bootstrap some random products
+// Bootstrap some random campaigns / ads
 mongoose.connection.once('open', function () {
+  if (process.env.TESTING) return;
 
   var adsData = [
     {
@@ -201,32 +203,32 @@ mongoose.connection.once('open', function () {
     {
       name: '01 campaign',
       tags: ['tag01'],
-      ads: ['ad01', 'ad02', 'ad03']
+      ads: []
     },
     {
       name: '02 campaign',
       tags: ['tag02', 'tag04'],
-      ads: ['ad01', 'ad02', 'ad03']
+      ads: []
     },
     {
       name: '03 campaign',
       tags: ['tag01', 'tag02'],
-      ads: ['ad01', 'ad02', 'ad03']
+      ads: []
     },
     {
       name: '04 campaign',
       tags: ['tag01', 'tag02'],
-      ads: ['ad03']
+      ads: []
     },
     {
       name: '05 campaign',
       tags: ['tag03'],
-      ads: ['ad05', 'ad04', 'ad06']
+      ads: []
     },
     {
       name: '06 campaign',
       tags: ['tag06'],
-      ads: ['ad06', 'ad05']
+      ads: []
     }
   ];
 
@@ -239,35 +241,34 @@ mongoose.connection.once('open', function () {
   // });
 
 
-  Marketing.Campaign.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Marketing.Campaign.create(campaignData);
-        }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Campaigns Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-
   Marketing.Ad.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Marketing.Ad.create(adsData);
+    .then(function (count) {
+      if (!count) {
+        return Marketing.Ad.create(adsData);
+      }
+    })
+    .then(function (ads) {
+      console.log('Ads Online');
+      campaignData.forEach( function (campaign) {
+        const adsQty = _.random(1, 3);
+        for (let i = 0; i < adsQty; i++) {
+          // this might add repeated ads /shrug
+          campaign.ads.push(_.sample(ads));
         }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Ads Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
       });
+      return Marketing.Campaign.count()
+    })
+    .then(function (count) {
+      if (!count) {
+        return Marketing.Campaign.create(campaignData);
+      }
+    })
+    .then(function () {
+      console.log('Campaigns Online');
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
 });
 
 module.exports.seneca = seneca;

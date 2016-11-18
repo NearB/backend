@@ -2,6 +2,8 @@
 usage: Marketing related types
 
 types:
+  SimpleAd: !include simpleObject.raml
+
   SuccessCampaign:
     type: !include successType.raml
     properties:
@@ -24,21 +26,21 @@ types:
 
   Campaign:
     description: |
-      A Campaign is a group of interchangable Ads that are related to each other.
-      When a given Campaing is applied, any of the Ads that compose it can be used to represent it.
+      A Campaign is a group of interchangeable Ads that are related to each other.
+      When a given Campaign is applied, any of the Ads that compose it can be used to represent it.
     type: object
     properties:
       id: string
       name: string
       tags:
-        description: Set of Tags used to identify when to apply this Campaing
+        description: Set of Tags used to identify when to apply this Campaign
         type: string[]
       ads:
-        description: Set of AdIds that are part of this Campaign
-        type: string[]
+        description: Set of Ads that are part of this Campaign
+        type: SimpleAd[]
       expiration?:
         description: |
-          Date in which this Campaing ends and stops being shown even if the are tag matches.
+          Date in which this Campaign ends and stops being shown even if the are tag matches.
           For example, a christmas campaign should automatically end after christmas.
         type: date-only
         example: 2016-11-23
