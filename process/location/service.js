@@ -26,6 +26,9 @@ if (process.env.TESTING){
 
 function beaconToFingerprint(beacons){
   const fingerprints = [];
+  console.log(beacons);
+  console.log(decodeURI(beacons));
+
   decodeURI(beacons).split(',')
   .forEach(tuple => {
     const fp = tuple.split('=');
@@ -34,10 +37,12 @@ function beaconToFingerprint(beacons){
     } else {
       fingerprints.push({
         mac: fp[0],
-        rssi: fp[1]
+        rssi: Number(fp[1])
       });
     }
   });
+
+  console.log(fingerprints);
   return fingerprints;
 }
 
@@ -54,13 +59,17 @@ seneca.add({role: 'location', resource:'locate', cmd: 'GET'}, (args, callback) =
   const trackingInformation = {
     group: 'NearB',
     username: username,
-    time: Date.now().toString(),
-    'wifi-fingerprint': beaconToFingerprint(args.beacons)
+    time: Date.now().toString()
   };
+
+  trackingInformation["wifi-fingerprint"] = beaconToFingerprint(args.beacons);
 
   const params = {
     trackingInfo: trackingInformation
   }
+
+  console.log(trackingInformation);
+  console.log(params);
 
   act({role: 'find', cmd: 'locate'}, params)
     .then(result => {
@@ -87,14 +96,14 @@ seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback
 
 seneca.add({role: 'location', resource:'locations', cmd: 'PUT'}, (args, callback) => {
 
-  if (!args.body){
+  if (args.body === undefined || args.body === null){
     callback("Missing tracking information data in body")
   }
 
   const params = {
     trackingInfo: args.body
   }
-
+  console.log(params);
   act({role: 'find', cmd: 'learn'}, params)
     .then(result => {
       callback(null, result);
@@ -152,7 +161,7 @@ seneca.add({role: 'location', resource:'discover', cmd: 'GET'}, (args, callback)
       group: 'NearB',
       username: username,
       time: Date.now().toString(),
-      'wifi-fingerprint': beaconToFingerprint(args.beacons)
+      wififingerprint: beaconToFingerprint(args.beacons)
     };
 
     const params = {
@@ -186,7 +195,7 @@ function setupStubs(seneca){
   });
   seneca.stub('role:find,cmd:locate', (args, cb) => {
     const bayesResult = {};
-    args.trackingInfo['wifi-fingerprint'].forEach(fp => {
+    args.trackingInfo[wififingerprint].forEach(fp => {
       bayesResult[`${args.trackingInfo.username}:${fp.mac}`] = fp.rssi;
     });
 

@@ -75,16 +75,16 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'stores', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/store/:storeId', cors(corsOptions), (req, res) => {
+  app.get('/api/stores/:storeId', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
   });
 
-  app.put('/api/store/:storeId', cors(corsOptions), (req, res) => {
+  app.put('/api/stores/:storeId', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
   });
 
   // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
-  app.get('/api/store/:storeId/products', cors(corsOptions), (req, res) => {
+  app.get('/api/stores/:storeId/products', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
@@ -94,19 +94,19 @@ module.exports = (app) => {
     reply(act({role: 'accounts', resource:'users', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/user/:userId', cors(corsOptions), cors(corsOptions), (req, res) => {
+  app.get('/api/users/:userId', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'user', cmd: req.method}, plain(req)), res);
   });
 
-  app.put('/api/user/:userId', cors(corsOptions), cors(corsOptions), (req, res) => {
+  app.put('/api/users/:userId', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'user', cmd: req.method}, plain(req)), res);
   });
 
-  app.get('/api/user/:userId/alerts', cors(corsOptions), cors(corsOptions), (req, res) => {
+  app.get('/api/users/:userId/alerts', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'alerts', cmd: req.method}, plain(req)), res);
   });
 
-  app.post('/api/user/:userId/alerts', cors(corsOptions), (req, res) => {
+  app.post('/api/users/:userId/alerts', cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'alerts', cmd: req.method}, plain(req)), res);
   });
 

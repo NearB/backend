@@ -95,9 +95,9 @@ seneca.add({role: 'users', cmd: 'update', type: 'id'}, (args, cb) => {
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
 
-  // Users.User.remove({}, function(err) {
-  //    console.log('collection removed')
-  // });
+  Users.User.remove({}, function(err) {
+     console.log('collection removed')
+  });
 
   var data = [
     {

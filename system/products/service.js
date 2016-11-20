@@ -228,12 +228,12 @@ seneca.add({role: 'cart', cmd: 'update', type: 'id'}, (args, cb) => {
 
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
-  // Products.Product.remove({}, function(err) {
-  //    console.log('collection removed')
-  // });
-  // Products.Cart.remove({}, function(err) {
-  //    console.log('collection removed')
-  // });
+  Products.Product.remove({}, function(err) {
+     console.log('collection removed')
+  });
+  Products.Cart.remove({}, function(err) {
+     console.log('collection removed')
+  });
 
 
   var products = [

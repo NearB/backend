@@ -13,11 +13,16 @@ class Find {
     console.log('Resource: ' + this._baseUrl + '/' + path);
     return {
       uri: this._baseUrl + '/' + path,
-      json: true
+      json: true,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
     };
   }
 
   _requestPromise(request){
+    console.log(request);
     return new Promise((resolve, reject) => {
       rp(request)
         .then(result => {
@@ -45,13 +50,21 @@ class Find {
     });
   }
 
+  recalculate(groupName) {
+    let request = this._resource('calculate');
+    request.method = 'GET';
+    request.qs = {
+        group: groupName
+    };
+    return this._requestPromise(request);
+  }
+
   listLocations(groupName) {
     let request = this._resource('location');
     request.method = 'GET';
     request.qs = {
         group: groupName
     };
-
     return this._requestPromise(request);
   }
 

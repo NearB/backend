@@ -233,12 +233,12 @@ mongoose.connection.once('open', function () {
   ];
 
   // DROP COLLECTIONS
-  // Marketing.Campaign.remove({}, function(err) {
-  //    console.log('collection removed')
-  // });
-  // Marketing.Ad.remove({}, function(err) {
-  //    console.log('collection removed')
-  // });
+  Marketing.Campaign.remove({}, function(err) {
+     console.log('collection removed')
+  });
+  Marketing.Ad.remove({}, function(err) {
+     console.log('collection removed')
+  });
 
 
   Marketing.Ad.count()
