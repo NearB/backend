@@ -106,7 +106,7 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
-  app.post('/api/stores/:storeId/products', cors(corsOptions), (req, res) => {
+  app.put('/api/stores/:storeId/products', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
