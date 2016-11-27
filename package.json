@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "NearB backend services",
+  "scripts": {
+    "start": "fuge shell ./compose-dev.yml",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NearB/backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NearB/backend/issues"
+  },
+  "homepage": "https://github.com/NearB/backend#readme",
+  "dependencies": {
+    "fuge": "^0.8.1"
+  },
+  "engines" : { "node" : ">=7.2.0" } }
+
+}

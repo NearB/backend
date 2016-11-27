@@ -5,10 +5,11 @@
 - [Docker](https://www.docker.com/products/overview#/install_the_platform)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [Node.js](https://nodejs.org/en/download/)
-- [fuge](http://fuge.io/)
 
 
 ## First time setup
+
+As usual, run `npm install`.
 
 Each storage is inside its docker image, so the first time you'll have to run
 
@@ -26,11 +27,15 @@ docker create --name find__data_volume -v /go/src/app/data sebastianbogado/find 
 
 
 ## Run the app
+We use [fuge](http://fuge.io/) as an execution environment for the services.
 ```
-fuge shell ./compose-dev.yml
+npm start  # this opens fuge shell
 fuge> start
 ```
 
+
+Its shell features lots of useful commands, for debugging, profile, watching for changes, 
+among others. [Here](https://github.com/apparatus/fuge#terminal-commands)'s the full list.
 
 ### Checking if everything worked
 
