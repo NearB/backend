@@ -17,7 +17,9 @@ const successCb = (cb) => {
 };
 
 const execute = (query, cb) => {
-  const promise = query.select('-__v').lean();
+  if (!query.selectedInclusively()) query.select('-__v');
+
+  const promise = query.lean();
   if (!cb) {
     return promise;
   }

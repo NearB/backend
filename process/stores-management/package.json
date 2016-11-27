@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "bluebird": "^3.4.1",
+    "lodash": "^4.17.2",
     "seneca": "^2.0.1"
   },
   "repository": {

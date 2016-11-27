@@ -1,6 +1,8 @@
 #%RAML 1.0 Library
 uses:
   locations: locations.raml
+  products: product.raml
+
 
 usage: Store related types
 types:
@@ -31,6 +33,15 @@ types:
       price: number
       stock: number
 
+  # TODO: check if there are better ways to handle this populated version of ProductStock
+  FullProductStock:
+    description: References a product as part of the Stock of some Store or WareHouse
+    type: object
+    properties:
+      product: products.Product
+      price: number
+      stock: number
+
   SuccessStore:
     type: !include successType.raml
     properties:
@@ -43,4 +54,4 @@ types:
   SuccessStock:
     type: !include successType.raml
     properties:
-      data: ProductStock[]
+      data: FullProductStock[]

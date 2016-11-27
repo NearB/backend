@@ -2,6 +2,7 @@
 
 const Promise = require('bluebird');
 const seneca = require('seneca')();
+const _ = require('lodash');
 
 const act = Promise.promisify(seneca.act, {context: seneca});
 
@@ -14,6 +15,12 @@ if (process.env.TESTING){
     host: process.env.PROXY_HOST,
     port: process.env.stores_PORT,
     pin: {role: 'stores'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.products_PORT,
+    pin: {role: 'products'}
   });
 
 }
@@ -109,17 +116,37 @@ seneca.add({role: 'stores-management', resource:'products', cmd: 'GET'}, (args, 
     callback("Missing storeId id in url")
   }
 
-  //FIXME select: 'stock'   REMOVE .select('-__v')
   const params = {
-    id: args.storeId
-  }
+    id: args.storeId,
+    select: 'stock'
+  };
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
-      .then(result => {
-        //FIXME select: 'stock'   REMOVE .select('-__v')
-        callback(null, result.stock);
-      })
-      .catch(callback);
+    .then(_.property('stock'))
+    .then(stock => {
+      const productIds = _.map(stock, 'productId');
+      const params = {
+        where: {_id: {$in: productIds}},
+        select: 'name description img'
+      };
+      return Promise.props({
+        stock,
+        products: act({role: 'products', cmd: 'read'}, params)
+      });
+    })
+    .then(result => {
+      const stock = result.stock;
+      const products = result.products;
+      const stockWithProducts = _.map(stock, productStock => {
+        const productId = productStock.productId;
+        const stockWithProduct = _.omit(productStock, 'productId');
+        stockWithProduct.product = _.find(products, {_id: productId});
+        return stockWithProduct;
+      });
+
+      callback(null, stockWithProducts);
+    })
+    .catch(callback);
 });
 
 seneca.add({role: 'stores-management', resource:'products', cmd: 'PUT'}, (args, callback) => {

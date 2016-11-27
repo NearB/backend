@@ -13,7 +13,9 @@ const successCb = (cb) => {
 };
 
 const execute = (query, cb) => {
-  const promise = query.select('-__v').lean();
+  if (!query.selectedInclusively()) query.select('-__v');
+
+  const promise = query.lean();
   if (!cb) {
     return promise;
   }
@@ -40,7 +42,6 @@ seneca.add({role: 'products', cmd: 'create'}, (args, cb) => {
 // =============== read ===============
 
 seneca.add({role: 'products', cmd: 'read'}, (args, cb) => {
-  console.log('PRODUCTS READ');
   execute(Products.Product.find(args.where, args.select), cb);
 });
 
