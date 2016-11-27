@@ -19,6 +19,5 @@
   "dependencies": {
     "fuge": "^0.8.1"
   },
-  "engines" : { "node" : ">=7.2.0" } }
-
+  "engines" : { "node" : ">=7.2.0" }
 }
