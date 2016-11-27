@@ -95,10 +95,6 @@ seneca.add({role: 'users', cmd: 'update', type: 'id'}, (args, cb) => {
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
 
-  Users.User.remove({}, function(err) {
-     console.log('collection removed')
-  });
-
   var data = [
     {
       username: 'user01',
@@ -151,20 +147,24 @@ mongoose.connection.once('open', function () {
     }
   ];
 
-  Users.User.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Users.User.create(data);
-        }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Users Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+
+  Users.User.remove({}, function(err) {
+     console.log('collection removed');
+     Users.User.count()
+         .then(function (count) {
+           if (!count && !process.env.TESTING){
+             return Users.User.create(data);
+           }
+         })
+         .then(function () {
+           if (!process.env.TESTING){
+             console.log('Users Online');
+           }
+         })
+         .catch(function (err) {
+           console.log(err);
+         });
+  });
 
 });
 

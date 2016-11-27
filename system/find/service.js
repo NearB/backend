@@ -59,6 +59,7 @@ seneca.add({role: 'find', cmd: 'learn'}, (args, callback) => {
 
   client.learn(args.trackingInfo)
     .then(res => {
+      console.log(`RECALCULATE FOR GROUP ${args.trackingInfo.group}`);
       client.recalculate(args.trackingInfo.group).then(r => {
         callback(null, r);
       });
@@ -70,11 +71,6 @@ seneca.add({role: 'find', cmd: 'learn'}, (args, callback) => {
 });
 
 seneca.add({role: 'find', cmd: 'locate'}, (args, callback) => {
-
-  if (!args.trackingInfo){
-    callback({error: 'Missing group name'})
-  }
-  //TODO validate even further
 
   console.log(args.trackingInfo);
 

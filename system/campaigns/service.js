@@ -234,41 +234,41 @@ mongoose.connection.once('open', function () {
 
   // DROP COLLECTIONS
   Marketing.Campaign.remove({}, function(err) {
-     console.log('collection removed')
-  });
-  Marketing.Ad.remove({}, function(err) {
-     console.log('collection removed')
+     console.log('collection removed');
+
+     Marketing.Ad.remove({}, function(err) {
+        console.log('collection removed');
+        Marketing.Ad.count()
+          .then(function (count) {
+            if (!count) {
+              return Marketing.Ad.create(adsData);
+            }
+          })
+          .then(function (ads) {
+            console.log('Ads Online');
+            campaignData.forEach( function (campaign) {
+              const adsQty = _.random(1, 3);
+              for (let i = 0; i < adsQty; i++) {
+                // this might add repeated ads /shrug
+                campaign.ads.push(_.sample(ads));
+              }
+            });
+            return Marketing.Campaign.count()
+          })
+          .then(function (count) {
+            if (!count) {
+              return Marketing.Campaign.create(campaignData);
+            }
+          })
+          .then(function () {
+            console.log('Campaigns Online');
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+     });
   });
 
-
-  Marketing.Ad.count()
-    .then(function (count) {
-      if (!count) {
-        return Marketing.Ad.create(adsData);
-      }
-    })
-    .then(function (ads) {
-      console.log('Ads Online');
-      campaignData.forEach( function (campaign) {
-        const adsQty = _.random(1, 3);
-        for (let i = 0; i < adsQty; i++) {
-          // this might add repeated ads /shrug
-          campaign.ads.push(_.sample(ads));
-        }
-      });
-      return Marketing.Campaign.count()
-    })
-    .then(function (count) {
-      if (!count) {
-        return Marketing.Campaign.create(campaignData);
-      }
-    })
-    .then(function () {
-      console.log('Campaigns Online');
-    })
-    .catch(function (err) {
-      console.log(err);
-    });
 });
 
 module.exports.seneca = seneca;

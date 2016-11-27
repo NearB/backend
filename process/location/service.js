@@ -48,17 +48,21 @@ function beaconToFingerprint(beacons){
 
 // =============== /locate ===============
 // =============== ?username=someusername ===============
+// =============== ?group=someGroup ===============
 // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16%2C32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
 seneca.add({role: 'location', resource:'locate', cmd: 'GET'}, (args, callback) => {
 
-  if (!args.beacons){
+  if (args.beacons == null){
     callback({error: 'Missing beacons'})
   }
 
-  const username = args.username ? args.username : 'admin';
+  if (args.username == null || args.group == null){
+    callback({error: 'Missing username and group'})
+  }
+
   const trackingInformation = {
-    group: 'NearB',
-    username: username,
+    group: args.group,
+    username: args.username,
     time: Date.now().toString()
   };
 
@@ -69,7 +73,6 @@ seneca.add({role: 'location', resource:'locate', cmd: 'GET'}, (args, callback) =
   }
 
   console.log(trackingInformation);
-  console.log(params);
 
   act({role: 'find', cmd: 'locate'}, params)
     .then(result => {
@@ -82,7 +85,7 @@ seneca.add({role: 'location', resource:'locate', cmd: 'GET'}, (args, callback) =
 seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback) => {
 
   const params = {
-    group: 'NearB'
+    group: 'Stores'
   }
 
   act({role: 'find', cmd: 'list'}, params)
@@ -96,7 +99,7 @@ seneca.add({role: 'location', resource:'locations', cmd: 'GET'}, (args, callback
 
 seneca.add({role: 'location', resource:'locations', cmd: 'PUT'}, (args, callback) => {
 
-  if (args.body === undefined || args.body === null){
+  if (args.body == null){
     callback("Missing tracking information data in body")
   }
 
@@ -119,7 +122,7 @@ seneca.add({role: 'location', resource:'location', cmd: 'DELETE'}, (args, callba
   }
 
   const params = {
-    group: 'NearB',
+    group: 'Stores',
     location: args.locationId
   }
 
@@ -158,7 +161,7 @@ seneca.add({role: 'location', resource:'discover', cmd: 'GET'}, (args, callback)
     //FIXME copy paste
     const username = args.username ? args.username : 'admin';
     const trackingInformation = {
-      group: 'NearB',
+      group: 'Stores',
       username: username,
       time: Date.now().toString(),
       wififingerprint: beaconToFingerprint(args.beacons)

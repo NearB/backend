@@ -229,12 +229,6 @@ seneca.add({role: 'cart', cmd: 'update', type: 'id'}, (args, cb) => {
 
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
-  Products.Product.remove({}, function(err) {
-     console.log('collection removed')
-  });
-  Products.Cart.remove({}, function(err) {
-     console.log('collection removed')
-  });
 
 
   var products = [
@@ -251,20 +245,23 @@ mongoose.connection.once('open', function () {
       description: 'ABV: 5.7%, IBU: 30, Pale, Caramel, Roasted Barley, Oats'
     }];
 
-  Products.Product.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Products.Product.create(products);
-        }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Products Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+    Products.Product.remove({}, function(err) {
+       console.log('collection removed');
+       Products.Product.count()
+           .then(function (count) {
+             if (!count && !process.env.TESTING){
+               return Products.Product.create(products);
+             }
+           })
+           .then(function () {
+             if (!process.env.TESTING){
+               console.log('Products Online');
+             }
+           })
+           .catch(function (err) {
+             console.log(err);
+           });
+    });
 
   var cart = {
     total: 20,
@@ -279,20 +276,24 @@ mongoose.connection.once('open', function () {
     discount: 0
   };
 
-  Products.Cart.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Products.Cart.create(cart);
-        }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Cart Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+  Products.Cart.remove({}, function(err) {
+     console.log('collection removed');
+     Products.Cart.count()
+         .then(function (count) {
+           if (!count && !process.env.TESTING){
+             return Products.Cart.create(cart);
+           }
+         })
+         .then(function () {
+           if (!process.env.TESTING){
+             console.log('Cart Online');
+           }
+         })
+         .catch(function (err) {
+           console.log(err);
+         });
+  });
+
 });
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});

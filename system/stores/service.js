@@ -7,9 +7,6 @@ mongoose.Promise = require('bluebird');
 const Stores = require('./models').Stores;
 
 
-console.log("PROCESS CUSTOM ENV");
-console.log(process.env.CUSTOM);
-
 const successCb = (cb) => {
   return res => {
     return cb.call(this, null, res);
@@ -32,10 +29,12 @@ const execute = (query, cb) => {
 
 seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
   const newStore = args.store;
+  console.log(newStore);
   new Stores.Store(newStore)
       .save()
       .then(saved => {
         newStore._id = saved._id;
+        console.log(saved);
         cb(null, newStore);
       })
       .catch(cb);
@@ -99,10 +98,6 @@ seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 // Bootstrap some random stores
 mongoose.connection.once('open', function () {
 
-  Stores.Store.remove({}, function(err) {
-     console.log('collection removed')
-  });
-
   var stores = [
     {
       name: 'Barbas',
@@ -132,7 +127,10 @@ mongoose.connection.once('open', function () {
       name: 'DBox',
       ownerId: '816734549502593b55ac37e4',
       stock: [],
-      locations: ['dBox:reception', 'dBox:tables', 'dBox:kitchen'],
+      locations: [
+        'dBox:reception',
+        'dBox:tables',
+        'dBox:kitchen'],
       adIds: [],
       campaignIds: []
     },
@@ -146,20 +144,25 @@ mongoose.connection.once('open', function () {
     }
   ];
 
-  Stores.Store.count()
-      .then(function (count) {
-        if (!count && !process.env.TESTING){
-          return Stores.Store.create(stores);
-        }
-      })
-      .then(function () {
-        if (!process.env.TESTING){
-          console.log('Stores Online');
-        }
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+  Stores.Store.remove({}, function(err) {
+     console.log('collection removed');
+
+     Stores.Store.count()
+         .then(function (count) {
+           if (!count && !process.env.TESTING){
+             return Stores.Store.create(stores);
+           }
+         })
+         .then(function () {
+           if (!process.env.TESTING){
+             console.log('Stores Online');
+           }
+         })
+         .catch(function (err) {
+           console.log(err);
+         });
+  });
+
 });
 
 module.exports.seneca = seneca;

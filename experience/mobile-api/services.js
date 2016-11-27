@@ -83,6 +83,10 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'store', cmd: req.method}, plain(req)), res);
   });
 
+  app.post('/api/stores', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'stores', cmd: req.method}, plain(req)), res);
+  });
+
   // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
   app.get('/api/stores/:storeId/products', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
@@ -170,6 +174,7 @@ module.exports = (app) => {
 // =============== locate ===============
   // =============== ?beacons=24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
   // =============== ?username=someusername ===============
+  // =============== ?group=groupname ===============
   app.get('/api/locate', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'location', resource:'locate', cmd: req.method}, plain(req)), res);
   });

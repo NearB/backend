@@ -12,7 +12,7 @@ const ProductStock = mongoose.model('ProductStock', productStockSchema);
 const StoreModel = {
   name:{ type: String, required:[true, 'Missing required field [name]']},
   ownerId:{ type: String, required:[true, 'Missing required field [ownerId]']},
-  locations:{ type: [String], required:[true, 'Missing required field [locations]']},
+  locations:[String],
   stock: [productStockSchema],
   adIds: [String],
   campaignIds: [String],
@@ -21,16 +21,6 @@ const StoreModel = {
 
 const storeSchema = mongoose.Schema(StoreModel);
 const Store = mongoose.model('Store', storeSchema);
-
-storeSchema.pre('validate', function (next) {
-  const locations = this.get('locations');
-
-  if (!locations || !locations.length) {
-    const name = this.get('name');
-    this.locations = [`${name.toLowerCase()}:main`];
-  }
-  next();
-});
 
 module.exports = {
   Store: Store,
