@@ -18,7 +18,7 @@ if (process.env.TESTING){
   });
   seneca.client({
     host: process.env.PROXY_HOST,
-    port: process.env.stores_management_PORT,
+    port: process.env.marketing_PORT,
     pin: {role: 'marketing'}
   });
 
@@ -39,14 +39,23 @@ function createCart(engagementToken){
   }
 }
 
+function createToken(userId, storeId, adId){
+  let token = `${userId}:${storeId}:${new Date().getMilliseconds()}`;
+  if (adId != null){
+    token = token.concat(`:${adId}`);
+  }
+  return encodeURI(token);
+}
+
 // =============== /promotions ===============
 // =============== ?tags=one,two ===============
 // =============== ?locations=id1,id2 ===============
 // =============== ?beacons=18ui239u,18u2239u ===============
+
+// === FIXME this shouldn't be necessary ============ ?userId=18ui239u18u2239u ===============
 seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callback) => {
 
-  if (!args.beacons){
-    //FIXME
+  if (args.beacons == null){
     callback("Missing beacons");
   }
 
@@ -56,6 +65,9 @@ seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callb
 
   act({role: 'location', resource:'discover', cmd: 'GET'}, params)
       .then(stores => {
+        const adOriginMap = new Map();
+        stores.forEach(store => store.adIds.forEach(id => adOriginMap.set(id, store._id)));
+
         var adIds = stores.map(store => {
           return store.adIds;
         }).filter(ads => ads.length > 0);
@@ -68,7 +80,13 @@ seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callb
 
         Promise.all(adsForNearbyStores)
           .then(ads => {
-            callback(null, [].concat.apply([], ads));
+            console.log(ads);
+            const tokenizedAds = ([].concat.apply([], ads)).map(ad => {
+              const engagement = createToken(args.userId, adOriginMap.get(ad._id), ad._id);
+              return Object.assign({}, ad, {engagementToken: engagement});
+            });
+
+            callback(null, tokenizedAds);
           })
           .catch(callback);
       })
@@ -88,7 +106,7 @@ seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback
   }
 
   //TODO make token actually a token and not two string concatenated
-  const token = encodeURI(`${args.userId}:${args.storeId}`);
+  const token = createToken(args.userId, args.storeId);
   const params = {
     cart: createCart(token)
   }

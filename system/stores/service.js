@@ -21,7 +21,10 @@ const execute = (query, cb) => {
     return promise;
   }
   promise
-      .then(successCb(cb))
+      .then(r => {
+        console.log(r);
+        return cb(null, r);
+      })
       .catch(cb);
 };
 
@@ -43,6 +46,7 @@ seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
 // =============== read ===============
 
 seneca.add({role: 'stores', cmd: 'read'}, (args, cb) => {
+  console.log(args.where);
   execute(Stores.Store.find(args.where, args.select), cb);
 });
 
@@ -144,24 +148,24 @@ mongoose.connection.once('open', function () {
     }
   ];
 
-  Stores.Store.remove({}, function(err) {
-     console.log('collection removed');
-
-     Stores.Store.count()
-         .then(function (count) {
-           if (!count && !process.env.TESTING){
-             return Stores.Store.create(stores);
-           }
-         })
-         .then(function () {
-           if (!process.env.TESTING){
-             console.log('Stores Online');
-           }
-         })
-         .catch(function (err) {
-           console.log(err);
-         });
-  });
+  // Stores.Store.remove({}, function(err) {
+  //    console.log('collection removed');
+  //
+  //    Stores.Store.count()
+  //        .then(function (count) {
+  //          if (!count && !process.env.TESTING){
+  //            return Stores.Store.create(stores);
+  //          }
+  //        })
+  //        .then(function () {
+  //          if (!process.env.TESTING){
+  //            console.log('Stores Online');
+  //          }
+  //        })
+  //        .catch(function (err) {
+  //          console.log(err);
+  //        });
+  // });
 
 });
 

@@ -143,50 +143,54 @@ seneca.add({role: 'location', resource:'discover', cmd: 'GET'}, (args, callback)
 
   //TODO if necessary
 
-  if (args.locations){
-    const params = {
-      where: {
-        locations: { $in: args.locations.split(',') }
-      }
-    }
+  // if (args.locations){
+  //   const params = {
+  //     where: {
+  //       locations: { $in: args.locations.split(',') }
+  //     }
+  //   }
+  //
+  //   act({role: 'stores', cmd: 'read'}, params)
+  //     .then(result => {
+  //       callback(null, result);
+  //     })
+  //     .catch(callback);
+  // }
 
-    act({role: 'stores', cmd: 'read'}, params)
-      .then(result => {
-        callback(null, result);
-      })
-      .catch(callback);
+  //FIXME copy paste
+  const username = args.username ? args.username : 'admin';
+  const trackingInformation = {
+    group: 'Stores',
+    username: username,
+    time: Date.now().toString(),
+  };
+
+  trackingInformation["wifi-fingerprint"] = beaconToFingerprint(args.beacons);
+
+  const params = {
+    trackingInfo: trackingInformation
   }
 
-  if (args.beacons){
-    //FIXME copy paste
-    const username = args.username ? args.username : 'admin';
-    const trackingInformation = {
-      group: 'Stores',
-      username: username,
-      time: Date.now().toString(),
-      wififingerprint: beaconToFingerprint(args.beacons)
-    };
+  act({role: 'find', cmd: 'locate'}, params)
+    .then(result => {
+      const locations = Object.keys(result.bayes);
+      console.log(locations);
 
-    const params = {
-      trackingInfo: trackingInformation
-    }
-
-    act({role: 'find', cmd: 'locate'}, params)
-      .then(result => {
-        const params = {
-          where: {
-            locations: { $in: Object.keys(result.bayes) }
-          }
+      const params = {
+        where: {
+          locations: { $in: locations }
         }
+      }
 
-        act({role: 'stores', cmd: 'read'}, params)
-          .then(result => {
-            callback(null, result);
-          })
-          .catch(callback);
-      })
-      .catch(callback);
-  }
+      console.log(params);
+      act({role: 'stores', cmd: 'read'}, params)
+        .then(result => {
+          console.log(result);
+          callback(null, result);
+        })
+        .catch(callback);
+    })
+    .catch(callback);
 });
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});

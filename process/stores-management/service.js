@@ -64,8 +64,8 @@ seneca.add({role: 'stores-management', resource:'store', cmd: 'GET'}, (args, cal
   }
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
-      .then(result => {
-        callback(null, result);
+      .then(store => {
+        callback(null, store);
       })
       .catch(callback);
 });

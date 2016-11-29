@@ -276,22 +276,22 @@ mongoose.connection.once('open', function () {
     discount: 0
   };
 
-  Products.Cart.remove({}, function(err) {
-     console.log('collection removed');
-     Products.Cart.count()
-         .then(function (count) {
-           if (!count && !process.env.TESTING){
-             return Products.Cart.create(cart);
-           }
-         })
-         .then(function () {
-           if (!process.env.TESTING){
-             console.log('Cart Online');
-           }
-         })
-         .catch(function (err) {
-           console.log(err);
-         });
+  // Products.Cart.remove({}, function(err) {
+  //    console.log('collection removed');
+  //    Products.Cart.count()
+  //        .then(function (count) {
+  //          if (!count && !process.env.TESTING){
+  //            return Products.Cart.create(cart);
+  //          }
+  //        })
+  //        .then(function () {
+  //          if (!process.env.TESTING){
+  //            console.log('Cart Online');
+  //          }
+  //        })
+  //        .catch(function (err) {
+  //          console.log(err);
+  //        });
   });
 
 });

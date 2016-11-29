@@ -169,32 +169,32 @@ mongoose.connection.once('open', function () {
     {
       name: '01 Ad',
       tags: ['tag01'],
-      img: "/some/path"
+      img: "https://i1.wallpaperscraft.com/image/hamburger_fast_food_roll_bacon_onions_tomato_salad_sauce_5826_225x300.jpg"
     },
     {
       name: '02 Ad',
       tags: ['tag01'],
-      img: "/some/path"
+      img: "http://www.cellphone-wallpapers.net/Wallpapers/Iphone/Food/055.jpg"
     },
     {
       name: '03 Ad',
       tags: ['tag01', 'tag02'],
-      img: "/some/path"
+      img: "https://wallpaperscraft.com/image/pizza_piece_cheese_fast_food_1425_240x320.jpg"
     },
     {
       name: '04 Ad',
       tags: ['tag01', 'tag02'],
-      img: "/some/path"
+      img: "https://s-media-cache-ak0.pinimg.com/originals/1c/3a/5b/1c3a5bcf9b26fd184b8c6139dc47d485.jpg"
     },
     {
       name: '05 Ad',
       tags: ['tag03'],
-      img: "/some/path"
+      img: "http://mealmakeovermoms.com/kitchen/wp-content/uploads/2015/05/17238617628_b61124b288_b.jpg"
     },
     {
       name: '06 Ad',
       tags: ['tag01'],
-      img: "/some/path",
+      img: "http://www.cellphone-wallpapers.net/Wallpapers/Iphone/Food/045.jpg",
       expiration: "20161212"
     }
   ];
@@ -233,41 +233,41 @@ mongoose.connection.once('open', function () {
   ];
 
   // DROP COLLECTIONS
-  Marketing.Campaign.remove({}, function(err) {
-     console.log('collection removed');
-
-     Marketing.Ad.remove({}, function(err) {
-        console.log('collection removed');
-        Marketing.Ad.count()
-          .then(function (count) {
-            if (!count) {
-              return Marketing.Ad.create(adsData);
-            }
-          })
-          .then(function (ads) {
-            console.log('Ads Online');
-            campaignData.forEach( function (campaign) {
-              const adsQty = _.random(1, 3);
-              for (let i = 0; i < adsQty; i++) {
-                // this might add repeated ads /shrug
-                campaign.ads.push(_.sample(ads));
-              }
-            });
-            return Marketing.Campaign.count()
-          })
-          .then(function (count) {
-            if (!count) {
-              return Marketing.Campaign.create(campaignData);
-            }
-          })
-          .then(function () {
-            console.log('Campaigns Online');
-          })
-          .catch(function (err) {
-            console.log(err);
-          });
-     });
-  });
+  // Marketing.Campaign.remove({}, function(err) {
+  //    console.log('collection removed');
+  //
+  //    Marketing.Ad.remove({}, function(err) {
+  //       console.log('collection removed');
+  //       Marketing.Ad.count()
+  //         .then(function (count) {
+  //           if (!count) {
+  //             return Marketing.Ad.create(adsData);
+  //           }
+  //         })
+  //         .then(function (ads) {
+  //           console.log('Ads Online');
+  //           campaignData.forEach( function (campaign) {
+  //             const adsQty = _.random(1, 3);
+  //             for (let i = 0; i < adsQty; i++) {
+  //               // this might add repeated ads /shrug
+  //               campaign.ads.push(_.sample(ads));
+  //             }
+  //           });
+  //           return Marketing.Campaign.count()
+  //         })
+  //         .then(function (count) {
+  //           if (!count) {
+  //             return Marketing.Campaign.create(campaignData);
+  //           }
+  //         })
+  //         .then(function () {
+  //           console.log('Campaigns Online');
+  //         })
+  //         .catch(function (err) {
+  //           console.log(err);
+  //         });
+  //    });
+  // });
 
 });
 
