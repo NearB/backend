@@ -25,7 +25,7 @@ if (process.env.TESTING){
   // System APIs
   seneca.client({
     host: process.env.PROXY_HOST,
-    port: process.env.stores_PORT,
+    port: process.env.products_PORT,
     pin: {role: 'cart'}
   });
 }
@@ -160,7 +160,7 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) =
   //TODO validate token is valid client and store ids
 
 
-  act({role: 'cart', cmd: 'read', type:'id'}, args)
+  act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(result => {
         callback(null, result);
       })
@@ -232,6 +232,121 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'DELETE'}, (args, callback
       })
       .catch(callback);
 });
+
+// =============== carts/:cartId/products/:productId' ===============
+// =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+seneca.add({role: 'engagement', resource:'products', cmd: 'PUT'}, (args, callback) => {
+
+  if (args.cartId == null){
+    callback("Missing cart Id");
+  }
+
+  if (args.body == null){
+    callback("Missing body for update");
+  }
+
+  if (args.engagement == null){
+    callback("Missing engagement token");
+  }
+
+  let updatedProducts = args.body;
+  act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
+      .then(cart => {
+
+        updatedProducts = updatedProducts.map(updated => {
+          let modifiedProd = cart.products.find(p => p.productId == updated.productId);
+          if (modifiedProd == null){
+            modifiedProd = {
+              productId: updated.productId,
+              price: updated.price,
+              quantity: 0
+            };
+          }
+          modifiedProd.quantity = +modifiedProd.quantity + +updated.quantity;
+          return modifiedProd;
+        });
+
+        const nonUpdatedProducts = cart.products.filter(p => updatedProducts.find(i => i.productId == p.productId) == null);
+
+        const finalProducts = nonUpdatedProducts.concat(updatedProducts);
+
+        cart['total'] = finalProducts.reduce((a, b)=> {return (+a.price * +a.quantity) + (+b.price * +b.quantity)});
+        cart['products'] = finalProducts
+
+        const params = {
+          id: cart._id,
+          doc: cart
+        };
+
+        act({role: 'cart', cmd: 'update', type:'id'}, params)
+            .then(cart => {
+              callback(null, cart);
+            })
+            .catch(callback);
+      })
+      .catch(callback);
+});
+
+
+// =============== carts/:cartId/products/:productId' ===============
+// =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+seneca.add({role: 'engagement', resource:'product', cmd: 'PUT'}, (args, callback) => {
+
+  if (args.cartId == null){
+    callback("Missing cart Id");
+  }
+
+  if (args.body == null){
+    callback("Missing body for update");
+  }
+
+  if (args.engagement == null){
+    callback("Missing engagement token");
+  }
+
+  if (args.productId == null){
+    callback("Missing product Id");
+  }
+
+  const cartProduct = args.body;
+  act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
+      .then(cart => {
+
+        let products = cart.products;
+        let modifiedProd = cart.products.find(p => p.productId == cartProduct.productId);
+        if (modifiedProd == null){
+          console.log("PRODUCT NOT PRESENT: " + cartProduct.productId);
+          modifiedProd = {
+            productId: cartProduct.productId,
+            price: cartProduct.price,
+            quantity: 0
+          };
+        } else {
+          console.log("PRESENT: " + cartProduct.productId);
+          products = products.splice(modifiedProd, 1);
+        }
+
+        modifiedProd.quantity = +modifiedProd.quantity + +cartProduct.quantity;
+
+        cart['total'] = cart['total'] + cartProduct.quantity *1* cartProduct.price;
+        cart['products'] = products.concat(modifiedProd);
+
+        const params = {
+          id: cart._id,
+          doc: cart
+        };
+
+        console.log("UPDATING CART");
+        console.log(cart);
+        act({role: 'cart', cmd: 'update', type:'id'}, params)
+            .then(cart => {
+              callback(null, cart);
+            })
+            .catch(callback);
+      })
+      .catch(callback);
+});
+
 
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});

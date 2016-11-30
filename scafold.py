@@ -4,7 +4,7 @@ from random import randint
 
 headers = {'Content-type': 'application/json'}
 
-ads = requests.get("http://192.168.0.100:10001/api/marketing/ads").json()['data']
+ads = requests.get("http://127.0.0.1:10001/api/marketing/ads").json()['data']
 prods = requests.get("http://127.0.0.1:10001/api/products").json()['data']
 stores = requests.get("http://127.0.0.1:10000/api/stores").json()['data']
 
