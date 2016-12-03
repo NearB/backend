@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 const Promise = require('bluebird');
 const seneca = require('seneca')();
 
@@ -28,6 +29,12 @@ if (process.env.TESTING){
     port: process.env.products_PORT,
     pin: {role: 'cart'}
   });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.products_PORT,
+    pin: {role: 'products'}
+  });
 }
 
 function createCart(engagementToken){
@@ -46,6 +53,8 @@ function createToken(userId, storeId, adId){
   }
   return encodeURI(token);
 }
+
+//TODO validate token EVERYWHERE
 
 // =============== /promotions ===============
 // =============== ?tags=one,two ===============
@@ -97,11 +106,11 @@ seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callb
 // =============== ?userId=937e45902b55581673454ac3&storeId=51673454902b55ac37e45938 ===============
 seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback) => {
 
-  if (!args.userId){
+  if (args.userId == null){
     callback("Missing userId");
   }
 
-  if (!args.storeId){
+  if (args.storeId == null){
     callback("Missing storeId");
   }
 
@@ -126,11 +135,13 @@ seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback
 });
 
 
+const CART_STATUS = {OPEN:'OPEN', PENDING_CHECKOUT:'CHECKOUT', CLOSED:'CLOSED'}
+
 // =============== /carts ===============
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'carts', cmd: 'POST'}, (args, callback) => {
 
-  if (!args.engagement){
+  if (args.engagement == null){
     callback("Missing engagement token");
   }
   //TODO validate token is valid client and store ids
@@ -150,15 +161,14 @@ seneca.add({role: 'engagement', resource:'carts', cmd: 'POST'}, (args, callback)
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) => {
 
-  if (!args.cartId){
+  if (args.cartId == null){
     callback("Missing cart Id");
   }
 
-  if (!args.engagement){
+  if (args.engagement == null){
     callback("Missing engagement token");
   }
   //TODO validate token is valid client and store ids
-
 
   act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(result => {
@@ -167,19 +177,18 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) =
       .catch(callback);
 });
 
-// =============== ?checkout=true ===============
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) => {
 
-  if (!args.cartId){
+  if (args.cartId == null){
     callback("Missing cart Id");
   }
 
-  if (!args.body){
+  if (args.body == null){
     callback("Missing body for update");
   }
 
-  if (!args.engagement){
+  if (args.engagement == null){
     callback("Missing engagement token");
   }
   //TODO validate token is valid client and store ids
@@ -189,23 +198,17 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) =
     doc: args.body
   }
 
-  act({role: 'cart', cmd: 'update', type:'id'}, params)
+  act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(cart => {
-
-        if (args.checkout){
-          const deleteParams = {
-            id: cart._id
-          };
-
-          // TODO
-          // trigger payment and notify store
-          //
-          // don't delete the cart yet, but flag it as pending for removal
-          // once the payment is completed
-          console.log("Pending checkout");
+        if (cart.status == CART_STATUS.OPEN){
+          act({role: 'cart', cmd: 'update', type:'id'}, params)
+              .then(cart => {
+                callback(null, cart);
+              })
+              .catch(callback);
+        } else {
+          callback(`Cart status was ${cart.status}, no further updates can be made`);
         }
-
-        callback(null, cart);
       })
       .catch(callback);
 });
@@ -213,24 +216,74 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) =
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'cart', cmd: 'DELETE'}, (args, callback) => {
 
-  if (!args.cartId){
+  if (args.cartId == null){
     callback("Missing cart Id");
   }
 
-  if (!args.engagement){
+  if (args.engagement == null){
     callback("Missing engagement token");
   }
-  //TODO validate token is valid client and store ids
 
   const params = {
     id: args.cartId
   }
 
-  act({role: 'cart', cmd: 'delete', type:'id'}, params)
-      .then(result => {
-        callback(null, result);
+  act({role: 'cart', cmd: 'read', type:'id'}, params)
+      .then(cart => {
+        if (cart.pendingCheckout){
+          act({role: 'cart', cmd: 'delete', type:'id'}, params)
+              .then(cart => {
+                callback(null, cart);
+              })
+              .catch(callback);
+        } else {
+          callback("Cart has a pending checkout");
+        }
       })
       .catch(callback);
+});
+
+
+// =============== /carts/{cartId}/products ===============
+// =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
+seneca.add({role: 'engagement', resource:'products', cmd: 'GET'}, (args, callback) => {
+
+  if (args.cartId == null){
+    callback("Missing cart Id");
+  }
+
+  if (args.engagement == null){
+    callback("Missing engagement token");
+  }
+  //TODO validate token is valid client and store ids
+
+  act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
+    .then(_.property('products'))
+    .then(cartProducts => {
+      const productIds = _.map(cartProducts, 'productId');
+      const params = {
+        where: {_id: {$in: productIds}},
+        select: 'name description img'
+      };
+      return Promise.props({
+        cartProducts,
+        productDetails: act({role: 'products', cmd: 'read'}, params)
+      });
+    })
+    .then(result => {
+      const cartProducts = result.cartProducts;
+      const productDetails = result.productDetails;
+      const productsWithDetail = _.map(cartProducts, cartProduct => {
+        const productId = cartProduct.productId;
+        const cartProductWithDetail = _.omit(cartProduct, 'productId');
+        cartProductWithDetail.product = _.find(productDetails, {_id: productId});
+        return cartProductWithDetail;
+      });
+
+      callback(null, productsWithDetail);
+    })
+    .catch(callback);
+
 });
 
 // =============== carts/:cartId/products/:productId' ===============

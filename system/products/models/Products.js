@@ -10,7 +10,6 @@ const CartProductModel = {
 var cartProductSchema = mongoose.Schema(CartProductModel, { _id : false });
 const CartProduct = mongoose.model('CartProduct', cartProductSchema);
 
-
 const ProductModel = {
   name:{ type: String, required:[true, 'Missing required field [name]']},
   tags:{ type: [String], required:[true, 'Missing required field [tags]']},
@@ -20,9 +19,12 @@ const ProductModel = {
 var productSchema = mongoose.Schema(ProductModel);
 const Product = mongoose.model('Product', productSchema);
 
+const CART_STATUS = {OPEN:'OPEN', PENDING_CHECKOUT:'CHECKOUT', CLOSED:'CLOSED'}
+
 const CartModel = {
   total:{ type: Number, required:[true, 'Missing required field [total]']},
   engagement: { type: String, required:[true, 'Missing required field [engagement]']},
+  status: { type: String, default: CART_STATUS.OPEN},
   products: [cartProductSchema],
   discount: Number
 };

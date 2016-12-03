@@ -19,7 +19,7 @@ const StoreModel = {
   address: String
 };
 
-const storeSchema = mongoose.Schema(StoreModel);
+const storeSchema = mongoose.Schema(StoreModel, { minimize: false });
 const Store = mongoose.model('Store', storeSchema);
 
 module.exports = {
