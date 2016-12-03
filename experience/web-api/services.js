@@ -58,6 +58,12 @@ seneca.client({
   pin: 'role:stores-management'
 });
 
+seneca.client({
+  host: process.env.PROXY_HOST,
+  port: process.env.engagement_PORT,
+  pin: 'role:engagement'
+});
+
 module.exports = (app) => {
   //TODO review if necessary to declare 'use' AND cors by route to enable preflight
   app.options('/api/stores', cors(corsOptions));
@@ -66,6 +72,10 @@ module.exports = (app) => {
   app.options('/api/stores/:storeId/campaigns', cors(corsOptions));
   app.options('/api/stores/:storeId/ads', cors(corsOptions));
   app.options('/api/stores/:storeId/clients', cors(corsOptions));
+  app.options('/api/stores/:storeId/orders', cors(corsOptions));
+  app.options('/api/stores/:storeId/carts', cors(corsOptions));
+  app.options('/api/carts/:cartId', cors(corsOptions));
+  app.options('/api/orders/:orderId', cors(corsOptions));
   // app.options('/api/marketing', cors(corsOptions));
   app.options('/api/marketing/ads', cors(corsOptions));
   app.options('/api/marketing/ads/:adId', cors(corsOptions));
@@ -110,8 +120,6 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
-  // TODO REVIEW MISSING ENDPOINTS
-
   app.get('/api/stores/:storeId/campaigns', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'campaigns', cmd: req.method}, plain(req)), res);
   });
@@ -124,6 +132,15 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'clients', cmd: req.method}, plain(req)), res);
   });
 
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/stores/:storeId/carts', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'carts', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/stores/:storeId/orders', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'orders', cmd: req.method}, plain(req)), res);
+  });
 
 // =============== marketing ===============
 
@@ -224,6 +241,42 @@ module.exports = (app) => {
 
   app.delete('/api/locations/:locationId', cors(corsOptions), (req, res) => {
     reply(act({role: 'location', resource:'location', cmd: req.method}, plain(req)), res);
+  });
+
+// =============== engagement ===============
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/carts/', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'carts', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.put('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.delete('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/orders/:orderId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'order', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.put('/api/orders/:orderId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'order', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.delete('/api/orders/:orderId', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'order', cmd: req.method}, plain(req)), res);
   });
 
 };

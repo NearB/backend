@@ -33,7 +33,25 @@ if (process.env.TESTING){
   seneca.client({
     host: process.env.PROXY_HOST,
     port: process.env.products_PORT,
+    pin: {role: 'carts'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.products_PORT,
     pin: {role: 'products'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.products_PORT,
+    pin: {role: 'order'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.products_PORT,
+    pin: {role: 'orders'}
   });
 }
 
@@ -46,6 +64,15 @@ function createCart(engagementToken){
   }
 }
 
+function createOrder(cartId, products, engagementToken){
+  return {
+    cartId: cartId,
+    engagement: engagementToken,
+    status: 'PENDING',
+    products: products
+  }
+}
+
 function createToken(userId, storeId, adId){
   let token = `${userId}:${storeId}:${new Date().getMilliseconds()}`;
   if (adId != null){
@@ -53,6 +80,9 @@ function createToken(userId, storeId, adId){
   }
   return encodeURI(token);
 }
+
+const CART_STATUS = {OPEN:'OPEN', PENDING_CHECKOUT:'CHECKOUT', CLOSED:'CLOSED'}
+const ORDER_STATUS = {PENDING:'PENDING', DONE:'DONE', CANCELED:'CANCELED'}
 
 //TODO validate token EVERYWHERE
 
@@ -135,16 +165,9 @@ seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback
 });
 
 
-const CART_STATUS = {OPEN:'OPEN', PENDING_CHECKOUT:'CHECKOUT', CLOSED:'CLOSED'}
-
 // =============== /carts ===============
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'carts', cmd: 'POST'}, (args, callback) => {
-
-  if (args.engagement == null){
-    callback("Missing engagement token");
-  }
-  //TODO validate token is valid client and store ids
 
   const params = {
     cart: createCart(args.engagement)
@@ -157,6 +180,31 @@ seneca.add({role: 'engagement', resource:'carts', cmd: 'POST'}, (args, callback)
       .catch(callback);
 });
 
+// =============== /stores/{storeId}/carts ===============
+// =============== ?status=OPEN|CHECKOUT|CLOSED ===============
+seneca.add({role: 'engagement', resource:'carts', cmd: 'GET'}, (args, callback) => {
+
+  if (args.storeId == null){
+    callback("Missing storeId");
+  }
+
+  const query = {
+    where: { storeId: args.storeId }
+  };
+
+  if (args.status != null){
+      const requesteStatuses = args.status.toUpperCase().split(',');
+      query.where['status'] = {$in: requesteStatuses};
+  }
+
+  act({role: 'cart', cmd: 'read'}, query)
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(callback);
+});
+
+
 // =============== /carts/{cartId} ===============
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) => {
@@ -165,11 +213,6 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) =
     callback("Missing cart Id");
   }
 
-  if (args.engagement == null){
-    callback("Missing engagement token");
-  }
-  //TODO validate token is valid client and store ids
-
   act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(result => {
         callback(null, result);
@@ -177,6 +220,7 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'GET'}, (args, callback) =
       .catch(callback);
 });
 
+// =============== /carts/{cartId} ===============
 // =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) => {
 
@@ -188,9 +232,6 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) =
     callback("Missing body for update");
   }
 
-  if (args.engagement == null){
-    callback("Missing engagement token");
-  }
   //TODO validate token is valid client and store ids
 
   const params = {
@@ -200,14 +241,25 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) =
 
   act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(cart => {
-        if (cart.status == CART_STATUS.OPEN){
+        console.log(cart);
+        if (cart.status.toUpperCase() == CART_STATUS.OPEN){
           act({role: 'cart', cmd: 'update', type:'id'}, params)
-              .then(cart => {
-                callback(null, cart);
+              .then(updatedCart => {
+                callback(null, updatedCart);
               })
               .catch(callback);
         } else {
-          callback(`Cart status was ${cart.status}, no further updates can be made`);
+          if (cart.status.toUpperCase() == CART_STATUS.PENDING_CHECKOUT &&
+              params.doc.status.toUpperCase() == CART_STATUS.CLOSED)
+          {
+            act({role: 'cart', cmd: 'update', type:'id'}, params)
+                .then(updatedCart => {
+                  callback(null, updatedCart);
+                })
+                .catch(callback);
+          } else {
+            callback(`Cart status was ${cart.status}, no further updates can be made`);
+          }
         }
       })
       .catch(callback);
@@ -220,27 +272,52 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'DELETE'}, (args, callback
     callback("Missing cart Id");
   }
 
-  if (args.engagement == null){
-    callback("Missing engagement token");
-  }
-
   const params = {
     id: args.cartId
   }
 
   act({role: 'cart', cmd: 'read', type:'id'}, params)
       .then(cart => {
-        if (cart.pendingCheckout){
+        if (cart.status.toUpperCase() == CART_STATUS.CLOSED){
           act({role: 'cart', cmd: 'delete', type:'id'}, params)
-              .then(cart => {
-                callback(null, cart);
+              .then(deletedCart => {
+                callback(null, deletedCart);
               })
               .catch(callback);
         } else {
-          callback("Cart has a pending checkout");
+            if (cart.status.toUpperCase() == CART_STATUS.PENDING_CHECKOUT){
+              callback("Cart has a pending Checkout");
+            } else {
+              callback("Cart is still Open");
+            }
         }
       })
       .catch(callback);
+});
+
+
+// =============== /stores/{storeId}/orders ===============
+// =============== ?status=OPEN|CHECKOUT|CLOSED ===============
+seneca.add({role: 'engagement', resource:'orders', cmd: 'GET'}, (args, callback) => {
+
+  if (args.storeId == null){
+    callback("Missing storeId");
+  }
+
+  const query = {
+    where: { storeId: args.storeId }
+  };
+
+  if (args.status != null){
+      const requesteStatuses = args.status.toUpperCase().split(',');
+      query.where['status'] = {$in: requesteStatuses};
+  }
+
+  act({role: 'order', cmd: 'read'}, query)
+    .then(result => {
+      callback(null, result);
+    })
+    .catch(callback);
 });
 
 
@@ -286,8 +363,9 @@ seneca.add({role: 'engagement', resource:'products', cmd: 'GET'}, (args, callbac
 
 });
 
-// =============== carts/:cartId/products/:productId' ===============
+// =============== carts/:cartId/products' ===============
 // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+// =============== &skipOrder ===============
 seneca.add({role: 'engagement', resource:'products', cmd: 'PUT'}, (args, callback) => {
 
   if (args.cartId == null){
@@ -302,43 +380,64 @@ seneca.add({role: 'engagement', resource:'products', cmd: 'PUT'}, (args, callbac
     callback("Missing engagement token");
   }
 
-  let updatedProducts = args.body;
+  const updatedProducts = args.body;
+
+  let updateTransaction;
+  if (args.skipOrder != null){
+    updateTransaction = (cart) => updateCartProducts(cart, updatedProducts);
+
+  } else {
+    updateTransaction = (cart) =>{
+      const newOrder = createOrder(cart._id, updatedProducts, args.engagement);
+
+      return act({role: 'order', cmd: 'create'}, {order: newOrder})
+      .then(res => {
+        return updateCartProducts(cart, updatedProducts);
+      }).catch(callback);
+    }
+  }
+
   act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(cart => {
-
-        updatedProducts = updatedProducts.map(updated => {
-          let modifiedProd = cart.products.find(p => p.productId == updated.productId);
-          if (modifiedProd == null){
-            modifiedProd = {
-              productId: updated.productId,
-              price: updated.price,
-              quantity: 0
-            };
-          }
-          modifiedProd.quantity = +modifiedProd.quantity + +updated.quantity;
-          return modifiedProd;
-        });
-
-        const nonUpdatedProducts = cart.products.filter(p => updatedProducts.find(i => i.productId == p.productId) == null);
-
-        const finalProducts = nonUpdatedProducts.concat(updatedProducts);
-
-        cart['total'] = finalProducts.reduce((a, b)=> {return (+a.price * +a.quantity) + (+b.price * +b.quantity)});
-        cart['products'] = finalProducts
-
-        const params = {
-          id: cart._id,
-          doc: cart
-        };
-
-        act({role: 'cart', cmd: 'update', type:'id'}, params)
-            .then(cart => {
-              callback(null, cart);
-            })
-            .catch(callback);
+        return updateTransaction(cart);
+      })
+      .then(updatedCart => {
+        callback(null, updatedCart);
       })
       .catch(callback);
 });
+
+function updateCartProducts(cart, updatedProducts){
+  updatedProducts = updatedProducts.map(updated => {
+    let modifiedProd = cart.products.find(p => p.productId == updated.productId);
+    if (modifiedProd == null){
+      modifiedProd = {
+        productId: updated.productId,
+        price: updated.price,
+        quantity: 0
+      };
+    }
+    modifiedProd.quantity = +modifiedProd.quantity + +updated.quantity;
+    return modifiedProd;
+  });
+
+  const nonUpdatedProducts = cart.products.filter(p => updatedProducts.find(i => i.productId == p.productId) == null);
+
+  const finalProducts = nonUpdatedProducts.concat(updatedProducts);
+
+  cart['total'] = finalProducts.length > 1
+                    ? finalProducts.reduce((a, b)=> {return (+a.price * +a.quantity) + (+b.price * +b.quantity)})
+                    : +finalProducts[0].price * +finalProducts[0].quantity;
+
+  cart['products'] = finalProducts
+
+  const params = {
+    id: cart._id,
+    doc: cart
+  };
+
+  return act({role: 'cart', cmd: 'update', type:'id'}, params);
+}
 
 
 // =============== carts/:cartId/products/:productId' ===============
@@ -368,14 +467,12 @@ seneca.add({role: 'engagement', resource:'product', cmd: 'PUT'}, (args, callback
         let products = cart.products;
         let modifiedProd = cart.products.find(p => p.productId == cartProduct.productId);
         if (modifiedProd == null){
-          console.log("PRODUCT NOT PRESENT: " + cartProduct.productId);
           modifiedProd = {
             productId: cartProduct.productId,
             price: cartProduct.price,
             quantity: 0
           };
         } else {
-          console.log("PRESENT: " + cartProduct.productId);
           products = products.splice(modifiedProd, 1);
         }
 
@@ -396,6 +493,78 @@ seneca.add({role: 'engagement', resource:'product', cmd: 'PUT'}, (args, callback
               callback(null, cart);
             })
             .catch(callback);
+      })
+      .catch(callback);
+});
+
+
+// =============== /orders/{orderId} ===============
+seneca.add({role: 'engagement', resource:'order', cmd: 'GET'}, (args, callback) => {
+
+  if (args.orderId == null){
+    callback("Missing cart Id");
+  }
+
+  act({role: 'order', cmd: 'read', type:'id'}, {id: args.orderId})
+      .then(result => {
+        callback(null, result);
+      })
+      .catch(callback);
+});
+
+// =============== /orders/{orderId} ===============
+seneca.add({role: 'engagement', resource:'order', cmd: 'PUT'}, (args, callback) => {
+
+  if (args.orderId == null){
+    callback("Missing cart Id");
+  }
+
+  if (args.body == null){
+    callback("Missing body for update");
+  }
+
+  const params = {
+    id: args.orderId,
+    doc: args.body
+  }
+
+  act({role: 'order', cmd: 'read', type:'id'}, {id: args.orderId})
+      .then(order => {
+        if (order.status.toUpperCase() == ORDER_STATUS.PENDING){
+          act({role: 'order', cmd: 'update', type:'id'}, params)
+              .then(order => {
+                callback(null, order);
+              })
+              .catch(callback);
+        } else {
+          callback(`Order status was ${order.status}, no further updates can be made`);
+        }
+      })
+      .catch(callback);
+});
+
+// =============== /orders/{orderId} ===============
+seneca.add({role: 'engagement', resource:'order', cmd: 'DELETE'}, (args, callback) => {
+
+  if (args.orderId == null){
+    callback("Missing cart Id");
+  }
+
+  const params = {
+    id: args.orderId
+  }
+
+  act({role: 'order', cmd: 'read', type:'id'}, params)
+      .then(order => {
+        if (order.status.toUpperCase() != ORDER_STATUS.PENDING){
+          act({role: 'order', cmd: 'delete', type:'id'}, params)
+              .then(order => {
+                callback(null, order);
+              })
+              .catch(callback);
+        } else {
+          callback("Order resolution is still pending");
+        }
       })
       .catch(callback);
 });

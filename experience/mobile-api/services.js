@@ -140,11 +140,6 @@ module.exports = (app) => {
   });
 
   // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
-  app.delete('/api/carts/:cartId', cors(corsOptions), cors(corsOptions), (req, res) => {
-    reply(act({role: 'engagement', resource:'cart', cmd: req.method}, plain(req)), res);
-  });
-
-  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
   app.get('/api/carts/:cartId/products', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'engagement', resource:'products', cmd: req.method}, plain(req)), res);
   });

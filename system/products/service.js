@@ -183,21 +183,11 @@ seneca.add({role: 'cart', cmd: 'read', type: 'id'}, (args, cb) => {
   execute(Products.Cart.findById(args.id, args.select, args.ops), cb);
 });
 
-// seneca.add({role: 'cart', cmd: 'read', type: 'one'}, (args, cb) => {
-//   execute(Products.Cart.findOne(args.where, args.select, args.ops), cb);
-// });
-
-
 // =============== delete ===============
 
 seneca.add({role: 'cart', cmd: 'delete', type: 'id'}, (args, cb) => {
   execute(Products.Cart.findByIdAndRemove(args.id, args.ops), cb);
 });
-
-// seneca.add({role: 'cart', cmd: 'delete', type: 'one'}, (args, cb) => {
-//   execute(Products.Cart.findOneAndRemove(args.where, args.ops), cb);
-// });
-
 
 // =============== update ===============
 
@@ -206,30 +196,46 @@ seneca.add({role: 'cart', cmd: 'update', type: 'id'}, (args, cb) => {
   execute(Products.Cart.findByIdAndUpdate(args.id, args.doc, options), cb);
 });
 
-//REVIEW is neccesary
-// seneca.add({role: 'cart', cmd: 'update', type: 'one'}, (args, cb) => {
-//   execute(Products.Cart.findOneAndUpdate(args.where, args.doc, args.ops), cb);
-// });
-//
-// seneca.add({role: 'cart', cmd: 'update', type: 'bulk'}, (args, cb) => {
-//   execute(Products.Cart.find(args.where))
-//       .then(oldDocs => {
-//         execute(Products.Cart.update(args.where, args.doc, args.ops))
-//             .then((result) => {
-//               cb(null, {
-//                 updateResult: result,
-//                 modified: oldDocs
-//               })
-//             })
-//             .catch(cb);
-//       })
-//       .catch(cb);
-// });
 
+// =============== Order ===============
+// =============== create ===============
+seneca.add({role: 'order', cmd: 'create'}, (args, cb) => {
+  const newOrder = args.order;
+  console.log(newOrder);
+  new Products.Order(newOrder)
+      .save()
+      .then(saved => {
+        newOrder._id = saved._id;
+        cb(null, newOrder);
+      })
+      .catch(cb);
+});
+
+// =============== read ===============
+
+seneca.add({role: 'order', cmd: 'read'}, (args, cb) => {
+  execute(Products.Order.find(args.where, args.select), cb);
+});
+
+seneca.add({role: 'order', cmd: 'read', type: 'id'}, (args, cb) => {
+  execute(Products.Order.findById(args.id, args.select, args.ops), cb);
+});
+
+// =============== delete ===============
+
+seneca.add({role: 'order', cmd: 'delete', type: 'id'}, (args, cb) => {
+  execute(Products.Order.findByIdAndRemove(args.id, args.ops), cb);
+});
+
+// =============== update ===============
+
+seneca.add({role: 'order', cmd: 'update', type: 'id'}, (args, cb) => {
+  const options = Object.assign({}, {new: true}, args.ops)
+  execute(Products.Order.findByIdAndUpdate(args.id, args.doc, options), cb);
+});
 
 // Bootstrap some random products
 mongoose.connection.once('open', function () {
-
 
   var products = [
     {
@@ -245,23 +251,23 @@ mongoose.connection.once('open', function () {
       description: 'ABV: 5.7%, IBU: 30, Pale, Caramel, Roasted Barley, Oats'
     }];
 
-    Products.Product.remove({}, function(err) {
-       console.log('collection removed');
-       Products.Product.count()
-           .then(function (count) {
-             if (!count && !process.env.TESTING){
-               return Products.Product.create(products);
-             }
-           })
-           .then(function () {
-             if (!process.env.TESTING){
-               console.log('Products Online');
-             }
-           })
-           .catch(function (err) {
-             console.log(err);
-           });
-    });
+    // Products.Product.remove({}, function(err) {
+    //    console.log('collection removed');
+    //    Products.Product.count()
+    //        .then(function (count) {
+    //          if (!count && !process.env.TESTING){
+    //            return Products.Product.create(products);
+    //          }
+    //        })
+    //        .then(function () {
+    //          if (!process.env.TESTING){
+    //            console.log('Products Online');
+    //          }
+    //        })
+    //        .catch(function (err) {
+    //          console.log(err);
+    //        });
+    // });
 
   var cart = {
     total: 20,
