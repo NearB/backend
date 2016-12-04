@@ -1,0 +1,14 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "mkdir www || for f in *.raml; do raml2html $f > www/${f%.raml}.html; done && http-server www -o"
+  },
+  "devDependencies": {
+    "http-server": "*",
+    "raml2html": "^4.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
