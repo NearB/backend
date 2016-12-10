@@ -74,7 +74,7 @@ function createOrder(cartId, products, engagementToken){
 }
 
 function createToken(userId, storeId, adId){
-  let token = `${userId}:${storeId}:${new Date().getMilliseconds()}`;
+  let token = `${userId}:${storeId}:${new Date().getTime()}`;
   if (adId != null){
     token = token.concat(`:${adId}`);
   }
@@ -132,6 +132,46 @@ seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callb
       .catch(callback);
 });
 
+seneca.add({role: 'engagement', resource:'tags', cmd: 'GET'}, (args, callback) => {
+
+  if (args.beacons == null){
+    callback("Missing beacons");
+  }
+
+  const params = {
+    beacons: args.beacons
+  };
+
+  act({role: 'location', resource:'discover', cmd: 'GET'}, params)
+      .then(stores => {
+        var adIds = stores.map(store => store.adIds).filter(ids => ids.length > 0);
+        adIds = [].concat.apply([], adIds);
+        const taggedElements = adIds.map(id => {
+          return act({role: 'marketing', resource: 'ad', cmd: 'GET'},
+                  { adId: id });
+        });
+
+        var campaignIds = stores.map(store => store.campaignIds).filter(ids => ids.length > 0);
+        campaignIds = [].concat.apply([], campaignIds);
+        taggedElements.concat(
+            campaignIds.map(id => {
+              return act({role: 'marketing', resource: 'campaign', cmd: 'GET'},
+                         { campaignId: id });
+            })
+          );
+
+        Promise.all(taggedElements)
+          .then(tagged => {
+            const tags = [].concat.apply([], tagged.map(element => element.tags));
+            callback(null, [...new Set(tags.map(tag => tag.trim().toLowerCase()))]);
+          })
+          .catch(callback);
+      })
+      .catch(callback);
+});
+
+
+
 // =============== /engagement ===============
 // =============== ?userId=937e45902b55581673454ac3&storeId=51673454902b55ac37e45938 ===============
 seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback) => {
@@ -144,7 +184,6 @@ seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback
     callback("Missing storeId");
   }
 
-  //TODO make token actually a token and not two string concatenated
   const token = createToken(args.userId, args.storeId);
   const params = {
     cart: createCart(token)
@@ -152,11 +191,9 @@ seneca.add({role: 'engagement', resource:'engage', cmd: 'POST'}, (args, callback
 
   act({role: 'cart', cmd: 'create'}, params)
       .then(result => {
-
-        //TODO notify store that a costumer entered
         const engagementResult = {
           cartId: result._id,
-          token: token
+          engagementToken: token
         };
 
         callback(null, engagementResult);
@@ -297,6 +334,7 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'DELETE'}, (args, callback
 
 
 // =============== /stores/{storeId}/orders ===============
+// =============== ?engagement=58169988e7be135e5369225c:587be135e5369225c169988e ===============
 // =============== ?status=OPEN|CHECKOUT|CLOSED ===============
 seneca.add({role: 'engagement', resource:'orders', cmd: 'GET'}, (args, callback) => {
 
@@ -309,8 +347,12 @@ seneca.add({role: 'engagement', resource:'orders', cmd: 'GET'}, (args, callback)
   };
 
   if (args.status != null){
-      const requesteStatuses = args.status.toUpperCase().split(',');
-      query.where['status'] = {$in: requesteStatuses};
+    const requesteStatuses = args.status.toUpperCase().split(',');
+    query.where['status'] = {$in: requesteStatuses};
+  }
+
+  if (args.engagement != null){
+    query.where['engagement'] = args.engagement;
   }
 
   act({role: 'order', cmd: 'read'}, query)

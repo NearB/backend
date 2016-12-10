@@ -16,7 +16,9 @@ const StoreModel = {
   stock: [productStockSchema],
   adIds: [String],
   campaignIds: [String],
-  address: String
+  address: String,
+  gps: String,
+  img: String // Logo
 };
 
 const storeSchema = mongoose.Schema(StoreModel, { minimize: false });

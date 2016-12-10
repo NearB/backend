@@ -55,7 +55,6 @@ seneca.client({
 
 module.exports = (app) => {
 
-  //TODO review if necessary to declare 'use' AND cors by route to enable preflight
   app.options('/api/locate', cors(corsOptions));
   app.options('/api/locations', cors(corsOptions));
   app.options('/api/locations/:locationId', cors(corsOptions));
@@ -65,7 +64,10 @@ module.exports = (app) => {
   app.options('/api/users/:userId', cors(corsOptions));
   app.options('/api/stores', cors(corsOptions));
   app.options('/api/stores/:storeId', cors(corsOptions));
+  app.options('/api/stores/:storeId/orders', cors(corsOptions));
   app.options('/api/promotions', cors(corsOptions));
+  app.options('/api/promotions/tags', cors(corsOptions));
+  app.options('/api/engage', cors(corsOptions));
 
 // =============== stores-management ===============
 
@@ -124,6 +126,11 @@ module.exports = (app) => {
     reply(act({role: 'engagement', resource:'promotions', cmd: req.method}, plain(req)), res);
   });
 
+  // =============== ?beacons=?24%3Aa4%3A3c%3A9e%3Ad2%3A84%3D16,32%3Aa4%3A3c%3A9e%3Ad2%3A84%3D10 ===============
+  app.get('/api/promotions/tags', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'tags', cmd: req.method}, plain(req)), res);
+  });
+
   // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
   app.post('/api/carts/', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'engagement', resource:'carts', cmd: req.method}, plain(req)), res);
@@ -160,6 +167,15 @@ module.exports = (app) => {
     reply(act({role: 'engagement', resource:'product', cmd: req.method}, plain(req)), res);
   });
 
+  // =============== ?engagement=J1qK1c18UUGJFAzz9xnH56584l4 ===============
+  app.get('/api/stores/:storeId/orders', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'orders', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?userId=937e45902b55581673454ac3&storeId=51673454902b55ac37e45938 ===============
+  app.post('/api/engage', cors(corsOptions), cors(corsOptions), (req, res) => {
+    reply(act({role: 'engagement', resource:'engage', cmd: req.method}, plain(req)), res);
+  });
 
 // =============== location ===============
 
