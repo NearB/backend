@@ -23,6 +23,18 @@ if (process.env.TESTING){
     pin: {role: 'products'}
   });
 
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.campaigns_PORT,
+    pin: {role: 'campaigns'}
+  });
+
+  seneca.client({
+    host: process.env.PROXY_HOST,
+    port: process.env.campaigns_PORT,
+    pin: {role: 'ads'}
+  });
+
 }
 
 // =============== stores ===============
@@ -193,17 +205,21 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'GET'}, (args,
     callback("Missing storeId id in url")
   }
 
-  //FIXME select: 'stock'   REMOVE .select('-__v')
   const params = {
     id: args.storeId
   }
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
-      .then(result => {
-        //FIXME select: 'stock'   REMOVE .select('-__v')
-        callback(null, result.campaignIds);
-      })
-      .catch(callback);
+    .then(store => {
+      const params = {
+        where: {_id: {$in: store.campaignIds}}
+      };
+      return act({role: 'campaigns', cmd: 'read'}, params)
+    })
+    .then(campaigns => {
+      callback(null, campaigns);
+    })
+    .catch(callback);
 });
 
 seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'PUT'}, (args, callback) => {
@@ -255,11 +271,16 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'GET'}, (args, callb
   }
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
-      .then(result => {
-        //FIXME select: 'stock'   REMOVE .select('-__v')
-        callback(null, result.adIds);
-      })
-      .catch(callback);
+    .then(store => {
+      const params = {
+        where: {_id: {$in: store.adIds}}
+      };
+      return act({role: 'ads', cmd: 'read'}, params)
+    })
+    .then(ads => {
+      callback(null, ads);
+    })
+    .catch(callback);
 });
 
 seneca.add({role: 'stores-management', resource:'ads', cmd: 'PUT'}, (args, callback) => {
