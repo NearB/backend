@@ -177,11 +177,8 @@ seneca.add({role: 'stores-management', resource:'products', cmd: 'PUT'}, (args, 
 
   act({role: 'stores', cmd: 'read', type:'id'}, params)
       .then(result => {
-        var newStock = [args.body];
-        if (result.stock){
-          newStock = result.stock.concat(newStock)
-        }
-        const updatedStore = Object.assign({}, result, {stock: newStock})
+        const newStock = [].concat(args.body);
+        const updatedStore = Object.assign({}, result, {stock: newStock});
 
         const updateParams = {
           id: args.storeId,
