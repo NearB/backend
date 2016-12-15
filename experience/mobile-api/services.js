@@ -60,6 +60,7 @@ module.exports = (app) => {
   app.options('/api/locations/:locationId', cors(corsOptions));
   app.options('/api/carts', cors(corsOptions));
   app.options('/api/carts/:cartId', cors(corsOptions));
+  app.options('/api/login', cors(corsOptions));
   app.options('/api/users', cors(corsOptions));
   app.options('/api/users/:userId', cors(corsOptions));
   app.options('/api/stores', cors(corsOptions));
@@ -95,6 +96,15 @@ module.exports = (app) => {
   });
 
 // =============== accounts ===============
+
+  app.post('/api/login', cors(corsOptions), (req, res) => {
+    reply(act({role: 'accounts', resource:'login', cmd: req.method}, plain(req)), res);
+  });
+
+  // =============== ?auth=authId ===============
+  app.get('/api/login', cors(corsOptions), (req, res) => {
+    reply(act({role: 'accounts', resource:'login', cmd: req.method}, plain(req)), res);
+  });
 
   app.post('/api/users', cors(corsOptions), cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'users', cmd: req.method}, plain(req)), res);

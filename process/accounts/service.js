@@ -1,5 +1,6 @@
 'use strict';
 
+const _s = require("underscore.string");
 const Promise = require('bluebird');
 const seneca = require('seneca')();
 
@@ -20,41 +21,63 @@ if (process.env.TESTING){
 
 }
 
-// =============== /users ===============
-seneca.add({role: 'accounts', resource:'users', cmd: 'GET', type: 'username'}, (args, callback) => {
+// =============== /login ===============
+seneca.add({role: 'accounts', resource:'login', cmd: 'POST'}, (args, callback) => {
 
-  if (!args.username){
-    callback("Missing username");
+  if (args.body == null){
+    callback("Missing user profile data in body");
   }
 
+  const profile = args.body;
   const params = {
-    where: {username: args.username}
+      user: {
+        authId: profile.user_id != null ? profile.user_id : profile.userId,
+        username: _s.camelize(_s.trim(profile.name), true),
+        name: profile.name,
+        profile: profile
+      }
   };
 
-  act({role: 'users', cmd: 'read', type: 'one'}, params)
+  act({role: 'users', cmd: 'read', type: 'one'},
+      {
+        where: {auth: profile.user_id}
+      })
       .then(result => {
-        callback(null, result);
+        if (result == null){
+          act({role: 'users', cmd: 'create'}, params)
+              .then(result => {
+                callback(null, result);
+              })
+              .catch(callback);
+        } else {
+          callback(null, result);
+        }
       })
       .catch(callback);
 });
 
+// =============== ?auth=authId ===============
+seneca.add({role: 'accounts', resource:'login', cmd: 'GET'}, (args, callback) => {
 
-seneca.add({role: 'accounts', resource:'users', cmd: 'GET', type: 'fbLogin'}, (args, callback) => {
-
-  if (!args.fbId){
-    callback("Missing fb Id");
+  if (args.authId == null){
+    callback("Missing authId");
   }
 
   const params = {
-    where: {fbId: args.fbId}
+    where: {auth: decodeURI(args.auth_id)}
   };
 
   act({role: 'users', cmd: 'read', type: 'one'}, params)
       .then(result => {
-        callback(null, result);
+        if (result == null){
+          callback("User not found");
+        } else {
+          callback(null, result);
+        }
       })
       .catch(callback);
 });
+
 
 // =============== ?preferences=tag02,tag02 ===============
 seneca.add({role: 'accounts', resource:'users', cmd: 'GET'}, (args, callback) => {
@@ -71,27 +94,10 @@ seneca.add({role: 'accounts', resource:'users', cmd: 'GET'}, (args, callback) =>
       .catch(callback);
 });
 
-seneca.add({role: 'accounts', resource:'users', cmd: 'POST'}, (args, callback) => {
-
-  if (!args.body){
-    callback("Missing user data in body")
-  }
-
-  const params = {
-    user: args.body
-  }
-
-  act({role: 'users', cmd: 'create'}, params)
-      .then(result => {
-        callback(null, result);
-      })
-      .catch(callback);
-});
-
 // =============== /users/:userId ===============
 seneca.add({role: 'accounts', resource:'user', cmd: 'GET'}, (args, callback) => {
 
-  if (!args.userId){
+  if (args.userId  == null){
     callback("Missing userId id in url")
   }
 
@@ -108,11 +114,11 @@ seneca.add({role: 'accounts', resource:'user', cmd: 'GET'}, (args, callback) => 
 
 seneca.add({role: 'accounts', resource:'user', cmd: 'PUT'}, (args, callback) => {
 
-  if (!args.body){
+  if (args.body == null){
     callback("Missing user data in body")
   }
 
-  if (!args.userId){
+  if (args.userId == null){
     callback("Missing userId")
   }
 
@@ -130,7 +136,7 @@ seneca.add({role: 'accounts', resource:'user', cmd: 'PUT'}, (args, callback) => 
 
 seneca.add({role: 'accounts', resource:'user', cmd: 'DELETE'}, (args, callback) => {
 
-  if (!args.userId){
+  if (args.userId == null){
     callback("Missing userId")
   }
 

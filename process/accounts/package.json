@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "bluebird": "^3.4.1",
-    "seneca": "^2.0.1"
+    "seneca": "^2.0.1",
+    "underscore.string": "^3.3.4"
   },
   "repository": {
     "private": true
@@ -23,7 +24,10 @@
     "test": "tape test/*Test.js",
     "coverage": "istanbul cover npm test && open ./coverage/lcov-report/index.html",
     "coverage-check": "istanbul cover npm test && istanbul check-coverage",
-    "commit-check": ["lint", "coverage-check"]
+    "commit-check": [
+      "lint",
+      "coverage-check"
+    ]
   },
   "pre-commit": [
     "commit-check"

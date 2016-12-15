@@ -70,7 +70,9 @@ module.exports = (app) => {
   app.options('/api/stores/:storeId', cors(corsOptions));
   app.options('/api/stores/:storeId/products', cors(corsOptions));
   app.options('/api/stores/:storeId/campaigns', cors(corsOptions));
+  app.options('/api/stores/:storeId/campaigns/:campaignId', cors(corsOptions));
   app.options('/api/stores/:storeId/ads', cors(corsOptions));
+  app.options('/api/stores/:storeId/ads/:adId', cors(corsOptions));
   app.options('/api/stores/:storeId/clients', cors(corsOptions));
   app.options('/api/stores/:storeId/orders', cors(corsOptions));
   app.options('/api/stores/:storeId/carts', cors(corsOptions));
@@ -83,6 +85,7 @@ module.exports = (app) => {
   app.options('/api/marketing/campaigns/:campaignId', cors(corsOptions));
   app.options('/api/products', cors(corsOptions));
   app.options('/api/products/:productId', cors(corsOptions));
+  app.options('/api/login', cors(corsOptions));
   app.options('/api/users', cors(corsOptions));
   app.options('/api/users/:userId', cors(corsOptions));
   app.options('/api/users/:userId/stores', cors(corsOptions));
@@ -120,8 +123,24 @@ module.exports = (app) => {
     reply(act({role: 'stores-management', resource:'products', cmd: req.method}, plain(req)), res);
   });
 
+  app.put('/api/stores/:storeId/campaigns', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'campaigns', cmd: req.method}, plain(req)), res);
+  });
+
+  app.delete('/api/stores/:storeId/campaigns/:campaignId', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'campaign', cmd: req.method}, plain(req)), res);
+  });
+
   app.get('/api/stores/:storeId/campaigns', cors(corsOptions), (req, res) => {
     reply(act({role: 'stores-management', resource:'campaigns', cmd: req.method}, plain(req)), res);
+  });
+
+  app.put('/api/stores/:storeId/ads', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'ads', cmd: req.method}, plain(req)), res);
+  });
+
+  app.delete('/api/stores/:storeId/ads/:adId', cors(corsOptions), (req, res) => {
+    reply(act({role: 'stores-management', resource:'ad', cmd: req.method}, plain(req)), res);
   });
 
   app.get('/api/stores/:storeId/ads', cors(corsOptions), (req, res) => {
@@ -200,19 +219,17 @@ module.exports = (app) => {
 
 // =============== accounts ===============
 
-  // =============== TEMPORARY ENDPOINT UNTIL FB LOGIN ===============
-  // =============== ?username=username ===============
-  app.get('/api/users/:username', cors(corsOptions), (req, res) => {
-    reply(act({role: 'accounts', resource:'users', cmd: req.method, type:'username'}, plain(req)), res);
+  app.post('/api/login', cors(corsOptions), (req, res) => {
+    reply(act({role: 'accounts', resource:'login', cmd: req.method}, plain(req)), res);
   });
 
+  // =============== ?auth=authId ===============
+  app.get('/api/login', cors(corsOptions), (req, res) => {
+    reply(act({role: 'accounts', resource:'login', cmd: req.method}, plain(req)), res);
+  });
 
   // =============== ?preferences=tag02,tag02 ===============
   app.get('/api/users', cors(corsOptions), (req, res) => {
-    reply(act({role: 'accounts', resource:'users', cmd: req.method}, plain(req)), res);
-  });
-
-  app.post('/api/users', cors(corsOptions), (req, res) => {
     reply(act({role: 'accounts', resource:'users', cmd: req.method}, plain(req)), res);
   });
 

@@ -255,6 +255,43 @@ seneca.add({role: 'stores-management', resource:'campaigns', cmd: 'PUT'}, (args,
       .catch(callback);
 });
 
+seneca.add({role: 'stores-management', resource:'campaign', cmd: 'DELETE'}, (args, callback) => {
+
+  if (!args.storeId){
+    callback("Missing storeId id in url");
+  }
+
+  if (!args.campaignId){
+    callback("Missing campaigns id in url");
+  }
+
+  const params = {
+    id: args.storeId
+  };
+
+  act({role: 'stores', cmd: 'read', type:'id'}, params)
+      .then(result => {
+        if (!result.campaignIds){
+          callback("The store has no campaigns");
+        }
+
+        const newCampaignIds = result.campaignIds.filter(id => id != args.campaignId);
+        const updatedStore = Object.assign({}, result, {campaignIds: newCampaignIds})
+
+        const updateParams = {
+          id: args.storeId,
+          doc: updatedStore
+        }
+
+        act({role: 'stores', cmd: 'update', type:'id'}, updateParams)
+            .then(result => {
+              callback(null, result);
+            })
+            .catch(callback);
+      })
+      .catch(callback);
+});
+
 // =============== stores/:storeId/ads ===============
 seneca.add({role: 'stores-management', resource:'ads', cmd: 'GET'}, (args, callback) => {
 
@@ -315,6 +352,44 @@ seneca.add({role: 'stores-management', resource:'ads', cmd: 'PUT'}, (args, callb
       })
       .catch(callback);
 });
+
+seneca.add({role: 'stores-management', resource:'ad', cmd: 'DELETE'}, (args, callback) => {
+
+  if (!args.storeId){
+    callback("Missing storeId id in url");
+  }
+
+  if (!args.adId){
+    callback("Missing campaigns id in url");
+  }
+
+  const params = {
+    id: args.storeId
+  };
+
+  act({role: 'stores', cmd: 'read', type:'id'}, params)
+      .then(result => {
+        if (!result.adIds){
+          callback("The store has no campaigns");
+        }
+
+        const newAdIds = result.adIds.filter(id => id != args.campaignId);
+        const updatedStore = Object.assign({}, result, {adIds: newAdIds})
+
+        const updateParams = {
+          id: args.storeId,
+          doc: updatedStore
+        }
+
+        act({role: 'stores', cmd: 'update', type:'id'}, updateParams)
+            .then(result => {
+              callback(null, result);
+            })
+            .catch(callback);
+      })
+      .catch(callback);
+});
+
 
 seneca.listen({host: process.env.SERVICE_HOST, port: process.env.SERVICE_PORT});
 
