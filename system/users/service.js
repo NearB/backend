@@ -60,12 +60,6 @@ seneca.add({role: 'users', cmd: 'delete', type: 'id'}, (args, cb) => {
   execute(Users.User.findByIdAndRemove(args.id, args.ops), cb);
 });
 
-//REVIEW if necessary
-// seneca.add({role: 'users', cmd: 'delete', type: 'one'}, (args, cb) => {
-//   execute(Users.User.findOneAndRemove(args.where, args.ops), cb);
-// });
-
-
 // =============== update ===============
 
 seneca.add({role: 'users', cmd: 'update', type: 'id'}, (args, cb) => {
@@ -73,45 +67,24 @@ seneca.add({role: 'users', cmd: 'update', type: 'id'}, (args, cb) => {
   execute(Users.User.findByIdAndUpdate(args.id, args.doc, options), cb);
 });
 
-//REVIEW if necessary
-// seneca.add({role: 'users', cmd: 'update', type: 'one'}, (args, cb) => {
-//   execute(Users.User.findOneAndUpdate(args.where, args.doc, args.ops), cb);
-// });
-//
-// seneca.add({role: 'users', cmd: 'update', type: 'bulk'}, (args, cb) => {
-//   execute(Users.User.find(args.where))
-//       .then(oldDocs => {
-//         execute(Users.User.update(args.where, args.doc, args.ops))
-//             .then((result) => {
-//               cb(null, {
-//                 updateResult: result,
-//                 modified: oldDocs
-//               })
-//             })
-//             .catch(cb);
-//       })
-//       .catch(cb);
-// });
-
-// Bootstrap some random products
 mongoose.connection.once('open', function () {
 
   // Users.User.remove({}, function(err) {
-    //  console.log('collection removed');
-    //  Users.User.count()
-    //      .then(function (count) {
-    //        if (!count && !process.env.TESTING){
-    //          return Users.User.create(data);
-    //        }
-    //      })
-    //      .then(function () {
-    //        if (!process.env.TESTING){
-    //          console.log('Users Online');
-    //        }
-    //      })
-    //      .catch(function (err) {
-    //        console.log(err);
-    //      });
+  //    console.log('collection removed');
+  //   //  Users.User.count()
+  //   //      .then(function (count) {
+  //   //        if (!count && !process.env.TESTING){
+  //   //          return Users.User.create(data);
+  //   //        }
+  //   //      })
+  //   //      .then(function () {
+  //   //        if (!process.env.TESTING){
+  //   //          console.log('Users Online');
+  //   //        }
+  //   //      })
+  //   //      .catch(function (err) {
+  //   //        console.log(err);
+  //   //      });
   // });
 
 });

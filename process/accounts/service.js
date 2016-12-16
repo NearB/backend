@@ -40,7 +40,7 @@ seneca.add({role: 'accounts', resource:'login', cmd: 'POST'}, (args, callback) =
 
   act({role: 'users', cmd: 'read', type: 'one'},
       {
-        where: {auth: profile.user_id}
+        where: {authId: profile.user_id}
       })
       .then(result => {
         if (result == null){

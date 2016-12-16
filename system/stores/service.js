@@ -22,7 +22,6 @@ const execute = (query, cb) => {
   }
   promise
       .then(r => {
-        console.log(r);
         return cb(null, r);
       })
       .catch(cb);
@@ -32,12 +31,10 @@ const execute = (query, cb) => {
 
 seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
   const newStore = args.store;
-  console.log(newStore);
   new Stores.Store(newStore)
       .save()
       .then(saved => {
         newStore._id = saved._id;
-        console.log(saved);
         cb(null, newStore);
       })
       .catch(cb);
@@ -46,7 +43,6 @@ seneca.add({role: 'stores', cmd: 'create'}, (args, cb) => {
 // =============== read ===============
 
 seneca.add({role: 'stores', cmd: 'read'}, (args, cb) => {
-  console.log(args.where);
   execute(Stores.Store.find(args.where, args.select), cb);
 });
 

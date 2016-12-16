@@ -40,7 +40,12 @@ if (process.env.TESTING){
 // =============== stores ===============
 seneca.add({role: 'stores-management', resource:'stores', cmd: 'GET'}, (args, callback) => {
 
-  act({role: 'stores', cmd: 'read'}, args)
+  const params = {};
+  if (args.ownerId != null){
+    params['where'] = {ownerId: args.ownerId};
+  }
+
+  act({role: 'stores', cmd: 'read'}, params)
       .then(result => {
         callback(null, result);
       })

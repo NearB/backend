@@ -119,7 +119,6 @@ seneca.add({role: 'engagement', resource:'promotions', cmd: 'GET'}, (args, callb
 
         Promise.all(adsForNearbyStores)
           .then(ads => {
-            console.log(ads);
             const tokenizedAds = ([].concat.apply([], ads)).map(ad => {
               const engagement = createToken(args.userId, adOriginMap.get(ad._id), ad._id);
               return Object.assign({}, ad, {engagementToken: engagement});
@@ -278,7 +277,6 @@ seneca.add({role: 'engagement', resource:'cart', cmd: 'PUT'}, (args, callback) =
 
   act({role: 'cart', cmd: 'read', type:'id'}, {id: args.cartId})
       .then(cart => {
-        console.log(cart);
         if (cart.status.toUpperCase() == CART_STATUS.OPEN){
           act({role: 'cart', cmd: 'update', type:'id'}, params)
               .then(updatedCart => {
@@ -528,8 +526,6 @@ seneca.add({role: 'engagement', resource:'product', cmd: 'PUT'}, (args, callback
           doc: cart
         };
 
-        console.log("UPDATING CART");
-        console.log(cart);
         act({role: 'cart', cmd: 'update', type:'id'}, params)
             .then(cart => {
               callback(null, cart);
